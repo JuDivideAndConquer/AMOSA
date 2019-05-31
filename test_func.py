@@ -86,7 +86,7 @@ def SCH1(input):
     return out
 
 
-def SCH2(intput):
+def SCH2(input):
     func1 = float()
     if(input <= 1):
         func1 = - input
