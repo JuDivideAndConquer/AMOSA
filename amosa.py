@@ -1,6 +1,6 @@
 class AMOSAType:
     i_hardl = int()         # Hardlimit of the archive
-    i_soltl = int()         # Softlimit of the archive
+    i_softl = int()         # Softlimit of the archive
     i_no_ofiter = int()     # Number of iterations per temperature
     i_hillclimb_no = int()  # Total number of hill_climbing numbers
     i_maxno_bit = int()     # Maximum number of bits used to encode one variable

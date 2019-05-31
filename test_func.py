@@ -1,4 +1,46 @@
 from math import *
+from amosa import AMOSAType
+
+VALID_FUNC =  ['SCH1','SCH2','DTLZ1','DTLZ2','DTLZ3','DTLZ4']
+
+def init_functions(func):
+    obj = 0
+    var = 0
+    if(func in ['SCH1','SCH2']):
+        print("Number of objective functions: 2")
+        print("Number of variables: 1")
+        obj = 2
+        var = 1
+    else:
+        obj = int(input("Enter the number of objective functions: "))
+        var = int(input("Enter  the number of variables: "))
+    return obj,var
+
+
+def evaluate(input,amosaParams):
+    if(amosaParams.c_problem == 'SCH1'):
+        amosaParams.d_eval = SCH1(input)
+        return
+    elif(amosaParams.c_problem == 'SCH2'):
+        amosaParams.d_eval = SCH2(input)
+        return
+    elif(amosaParams.c_problem == 'DTLZ1'):
+        amosaParams.d_eval = DTLZ1(input,amosaParams.i_no_offunc)
+        return
+    elif(amosaParams.c_problem == 'DTLZ2'):
+        amosaParams.d_eval = DTLZ2(input,amosaParams.i_no_offunc)
+        return
+    elif(amosaParams.c_problem == 'DTLZ3'):
+        amosaParams.d_eval = DTLZ3(input,amosaParams.i_no_offunc)
+        return
+    elif(amosaParams.c_problem == 'DTLZ4'):
+        amosaParams.d_eval = DTLZ4(input,amosaParams.i_no_offunc)
+        return
+    else:
+        print ('Invalid arguement for amosaParams.c_problem\nExiting.')
+        exit()        
+
+
 
 
 def DTLZ1(input_arr, n_obj):
