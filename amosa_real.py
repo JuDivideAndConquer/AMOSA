@@ -3,8 +3,9 @@
 from amosa import AMOSAType
 from test_func import VALID_FUNC
 from test_func import init_functions
+from init_sol import initialize_sol
 
-def ReadParameters(amosaParams):
+def readParameters(amosaParams):
     func = input('Enter the test function name: ')
     if(not (func in VALID_FUNC)):
         print('Invaid function name. Exiting')
@@ -43,12 +44,13 @@ def ReadParameters(amosaParams):
         amosaParams.d_min_real_var.append(float(input('Enter the minimim value of real-variable '+str(i)+': ')))
         amosaParams.d_max_real_var.append(float(input('Enter the maximum value of real-variable '+str(i)+': ')))
         
-        
+    # Initialize the solution
+    initialize_sol(amosaParams)
 
 
        
 
-'''Main function (Execution starting point'''
+'''Main function (Execution starting point)'''
 amosaParams = AMOSAType()
-ReadParameters(amosaParams)
+readParameters(amosaParams)
 
