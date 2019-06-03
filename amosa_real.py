@@ -38,8 +38,12 @@ def ReadParameters(amosaParams):
         print('Invalid cooling rate (0 < Cooling rate < 1). Exiting')
         exit()
     
-    
-    
+    # Setting the range of values of variables
+    for i in range(amosaParams.i_totalno_var):
+        amosaParams.d_min_real_var.append(float(input('Enter the minimim value of real-variable '+str(i)+': ')))
+        amosaParams.d_max_real_var.append(float(input('Enter the maximum value of real-variable '+str(i)+': ')))
+        
+        
 
 
        

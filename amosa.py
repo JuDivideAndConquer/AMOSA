@@ -20,4 +20,4 @@ class AMOSAType:
     d_eval = []				# Objective function values
     d_func_range = []		# Range of the functions
     d_min_real_var = []		# Stores minimum value of the real variables
-    d_max_real_val = []		# Stores maximum value of the real variables
+    d_max_real_var = []		# Stores maximum value of the real variables
