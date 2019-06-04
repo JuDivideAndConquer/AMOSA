@@ -17,25 +17,25 @@ def init_functions(func):
     return obj,var
 
 
-def evaluate(input,amosaParams):
-    if(amosaParams.c_problem == 'SCH1'):
-        amosaParams.d_eval = SCH1(input)
-        return
-    elif(amosaParams.c_problem == 'SCH2'):
-        amosaParams.d_eval = SCH2(input)
-        return
-    elif(amosaParams.c_problem == 'DTLZ1'):
-        amosaParams.d_eval = DTLZ1(input,amosaParams.i_no_offunc)
-        return
-    elif(amosaParams.c_problem == 'DTLZ2'):
-        amosaParams.d_eval = DTLZ2(input,amosaParams.i_no_offunc)
-        return
-    elif(amosaParams.c_problem == 'DTLZ3'):
-        amosaParams.d_eval = DTLZ3(input,amosaParams.i_no_offunc)
-        return
-    elif(amosaParams.c_problem == 'DTLZ4'):
-        amosaParams.d_eval = DTLZ4(input,amosaParams.i_no_offunc)
-        return
+def evaluate(input,c_problem,i_no_offunc):
+    if(c_problem == 'SCH1'):
+        d_eval = SCH1(input)
+        return d_eval
+    elif(c_problem == 'SCH2'):
+        d_eval = SCH2(input)
+        return d_eval
+    elif(c_problem == 'DTLZ1'):
+        d_eval = DTLZ1(input,i_no_offunc)
+        return d_eval
+    elif(c_problem == 'DTLZ2'):
+        d_eval = DTLZ2(input,i_no_offunc)
+        return d_eval
+    elif(c_problem == 'DTLZ3'):
+        d_eval = DTLZ3(input,i_no_offunc)
+        return d_eval
+    elif(c_problem == 'DTLZ4'):
+        d_eval = DTLZ4(input,i_no_offunc)
+        return d_eval
     else:
         print ('Invalid arguement for amosaParams.c_problem\nExiting.')
         exit()        
