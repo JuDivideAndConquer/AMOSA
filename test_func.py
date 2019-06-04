@@ -19,10 +19,10 @@ def init_functions(func):
 
 def evaluate(input,c_problem,i_no_offunc):
     if(c_problem == 'SCH1'):
-        d_eval = SCH1(input)
+        d_eval = SCH1(input[0])
         return d_eval
     elif(c_problem == 'SCH2'):
-        d_eval = SCH2(input)
+        d_eval = SCH2(input[0])
         return d_eval
     elif(c_problem == 'DTLZ1'):
         d_eval = DTLZ1(input,i_no_offunc)

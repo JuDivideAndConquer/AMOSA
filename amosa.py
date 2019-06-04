@@ -17,7 +17,7 @@ class AMOSAType:
     dd_solution = []		# Data structure corresponding to binary strings
     dd_archive = []			# Archive
     dd_func_archive = []  	# Variable to store the fucntion values of the archive solutions
-    d_eval = []				# Objective function values
+    #d_eval = []				# Objective function values
     d_func_range = []		# Range of the functions
     d_min_real_var = []		# Stores minimum value of the real variables
     d_max_real_var = []		# Stores maximum value of the real variables

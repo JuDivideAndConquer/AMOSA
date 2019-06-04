@@ -33,6 +33,9 @@ def readParameters(amosaParams):
     
     # Function range according to input variables
     
+    # Setting hill-climb number
+    amosaParams.i_hillclimb_no = 20
+    
     # Setting the cooling rate
     amosaParams.d_alpha = float(input('Enter the cooling rate: '))
     if(amosaParams.d_alpha >= 1 or amosaParams.d_alpha < 0):
