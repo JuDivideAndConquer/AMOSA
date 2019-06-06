@@ -38,7 +38,7 @@ def initialize_sol(amosaParams):
             # Checking if all the new solutions are better than the old solutions
             count=0
             for k in range(amosaParams.i_no_offunc):
-                if(d_area1[k]>d_area2[k]):
+                if(d_area1[k]>=d_area2[k]):
                     count=count+1
             if(count==amosaParams.i_no_offunc):
                 for k in range(amosaParams.i_totalno_var):
