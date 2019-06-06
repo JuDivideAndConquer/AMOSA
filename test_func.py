@@ -1,23 +1,34 @@
 from math import *
 from amosa import AMOSAType
 
-VALID_FUNC =  ['SCH1','SCH2','DTLZ1','DTLZ2','DTLZ3','DTLZ4']
+VALID_FUNC = ['SCH1', 'SCH2', 'DTLZ1', 'DTLZ2', 'DTLZ3', 'DTLZ4']
+
 
 def init_functions(func):
+    '''Sets the number of variables and objectives for the test function'''
     obj = 0
     var = 0
-    if(func in ['SCH1','SCH2']):
+    if(func in ['SCH1', 'SCH2']):
         print("Number of objective functions: 2")
         print("Number of variables: 1")
         obj = 2
         var = 1
+    elif(func in ['DTLZ1', 'DTLZ2', 'DTLZ3', 'DTLZ4']):
+        obj = int(input("Enter the number of objective function: "))
+        k = int()
+        if(func == 'DTLZ1'):
+            k = 5
+        elif(func in ['DTLZ2','DTLZ3','DTLZ4']):
+            k = 10
+        var = obj + k - 1
+        print("Number of variables: " + str(var))
     else:
         obj = int(input("Enter the number of objective functions: "))
         var = int(input("Enter  the number of variables: "))
-    return obj,var
+    return obj, var
 
 
-def evaluate(input,c_problem,i_no_offunc):
+def evaluate(input, c_problem, i_no_offunc):
     if(c_problem == 'SCH1'):
         d_eval = SCH1(input[0])
         return d_eval
@@ -25,22 +36,20 @@ def evaluate(input,c_problem,i_no_offunc):
         d_eval = SCH2(input[0])
         return d_eval
     elif(c_problem == 'DTLZ1'):
-        d_eval = DTLZ1(input,i_no_offunc)
+        d_eval = DTLZ1(input, i_no_offunc)
         return d_eval
     elif(c_problem == 'DTLZ2'):
-        d_eval = DTLZ2(input,i_no_offunc)
+        d_eval = DTLZ2(input, i_no_offunc)
         return d_eval
     elif(c_problem == 'DTLZ3'):
-        d_eval = DTLZ3(input,i_no_offunc)
+        d_eval = DTLZ3(input, i_no_offunc)
         return d_eval
     elif(c_problem == 'DTLZ4'):
-        d_eval = DTLZ4(input,i_no_offunc)
+        d_eval = DTLZ4(input, i_no_offunc)
         return d_eval
     else:
-        print ('Invalid arguement for amosaParams.c_problem\nExiting.')
-        exit()        
-
-
+        print('Invalid arguement for amosaParams.c_problem\nExiting.')
+        exit()
 
 
 def DTLZ1(input_arr, n_obj):
@@ -141,7 +150,6 @@ def SCH2(input):
     func2 = (input - 5)**2
     out = [func1, func2]
     return out
-
 
 
 # functions left:
