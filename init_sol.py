@@ -1,6 +1,7 @@
 from amosa import AMOSAType
 import random
 from test_func import evaluate
+from real_mutate_ind import real_mutate_ind
 
 def initialize_sol(amosaParams):
     '''Function to initialize the solution set'''
@@ -28,7 +29,7 @@ def initialize_sol(amosaParams):
             for k in range(amosaParams.i_totalno_var):
                 d_xnew.append(amosaParams.dd_solution[i][k])
                 
-            #real_mutate_ind(d_xnew,amosaParams)
+            real_mutate_ind(d_xnew,amosaParams)
             d_eval = evaluate(d_xnew, amosaParams.c_problem,amosaParams.i_no_offunc)
             
             for k in range(amosaParams.i_no_offunc):
