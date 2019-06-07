@@ -3,10 +3,13 @@ from test_func import evaluate
 
 
 def creating_archive(amosaParams):
+    '''Initialize the archive according to the dd_solution'''
     dd_area = []
     d_eval = []
     i_flag = []
+    # Flag == 0 dominated | Flag == 1 non-dominated
 
+    # Storing the output of the solutions dd_area
     for i in range(amosaParams.i_softl):
         d_eval = evaluate(
             amosaParams.dd_solution[i], amosaParams.c_problem, amosaParams.i_no_offunc)
@@ -16,6 +19,7 @@ def creating_archive(amosaParams):
         dd_area.append(d_area)
         i_flag.append(1)
 
+    # Checking for dominated solutions, if the solutions are dominated their flag is set to 0
     for i in range(amosaParams.i_softl):
         if(i_flag[i] == 1):
             j = i+1
@@ -34,6 +38,7 @@ def creating_archive(amosaParams):
                         i_flag[j] = 0
                 j = j + 1
 
+    # Storing the non-dominated solutions to the archive
     archive_size = 0
     for i in range(amosaParams.i_softl):
         if(i_flag[i] == 1):
