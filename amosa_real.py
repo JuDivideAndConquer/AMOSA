@@ -4,6 +4,7 @@ from amosa import AMOSAType
 from test_func import VALID_FUNC
 from test_func import init_functions
 from init_sol import initialize_sol
+from creating_archive import creating_archive
 
 def readParameters(amosaParams):
     func = input('Enter the test function name: ')
@@ -49,6 +50,9 @@ def readParameters(amosaParams):
         
     # Initialize the solution
     initialize_sol(amosaParams)
+    
+    # Initialize the archive according to the solutions
+    creating_archive(amosaParams)
 
 
        
