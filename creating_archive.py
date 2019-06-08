@@ -52,6 +52,3 @@ def creating_archive(amosaParams):
             
             archive_size = archive_size + 1
     amosaParams.i_archivesize = archive_size
-    
-    print(len(amosaParams.dd_archive))
-    print(len(amosaParams.dd_func_archive))
