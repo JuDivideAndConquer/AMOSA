@@ -1,5 +1,6 @@
 from amosa import AMOSAType
 from test_func import evaluate
+import copy
 
 
 def creating_archive(amosaParams):
@@ -42,9 +43,15 @@ def creating_archive(amosaParams):
     archive_size = 0
     for i in range(amosaParams.i_softl):
         if(i_flag[i] == 1):
-            archive = []
-            for j in range(amosaParams.i_totalno_var):
-                archive.append(amosaParams.dd_solution[i][j])
+            
+            archive = copy.deepcopy(amosaParams.dd_solution[i])
             amosaParams.dd_archive.append(archive)
+            
+            func_archive = copy.deepcopy(dd_area[i])
+            amosaParams.dd_func_archive.append(func_archive)
+            
             archive_size = archive_size + 1
     amosaParams.i_archivesize = archive_size
+    
+    print(len(amosaParams.dd_archive))
+    print(len(amosaParams.dd_func_archive))
