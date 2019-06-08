@@ -5,6 +5,7 @@ from test_func import VALID_FUNC
 from test_func import init_functions
 from init_sol import initialize_sol
 from creating_archive import creating_archive
+from main_process import runAMOSA
 
 def readParameters(amosaParams):
     func = input('Enter the test function name: ')
@@ -60,4 +61,7 @@ def readParameters(amosaParams):
 '''Main function (Execution starting point)'''
 amosaParams = AMOSAType()
 readParameters(amosaParams)
+
+# Calling the main fucntion which runs the algorithm proposed in AMOSA
+runAMOSA(amosaParams)
 
