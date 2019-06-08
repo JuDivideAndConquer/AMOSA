@@ -1,9 +1,11 @@
 from amosa import AMOSAType
 import random
 import copy
+from math import *
 from real_mutate_ind import real_mutate_ind
 from test_func import evaluate
 from dominance import find_unsign_dom
+from dominance import is_dominated
 
 
 def runAMOSA(amosaParams):
@@ -11,6 +13,8 @@ def runAMOSA(amosaParams):
 	flag = int()
 	pos = int()
 	deldom = float()
+	p = float()
+	count = int()
 	current = []
 	func_current = []
 	func_new = []
@@ -51,5 +55,24 @@ def runAMOSA(amosaParams):
 			if(count1 == amosaParams.i_no_offunc):
 				deldom = 0.0
 				amount = find_unsign_dom(func_current, func_new, amosaParams)
+				deldom = deldom + amount
+				for j in range(amosaParams.i_archivesize):
+					count=1
+					if(flag == 0 or i!=r):
+						isdom = is_dominated(amosaParams.dd_func_archive[j],func_new,amosaParams)
+						if(isdom):
+							count = count + 1
+							amount = find_unsign_dom(amosaParams.dd_func_archive[j],func_new,amosaParams)
+							deldom = deldom + amount
+				
+				# Probablity for case 1
+				p = 1.0/(1.0 + exp(deldom/t))
 
-		t = t - amosaParams.d_alpha
+				# Selecting the new solution with probability p
+				ran2 = random.random()
+				if(p>=ran2):
+					current = copy.deepcopy(newsol)
+					func_current = copy.deepcopy(func_new)
+					flag = 0
+
+		t = round(t - amosaParams.d_alpha,6)
