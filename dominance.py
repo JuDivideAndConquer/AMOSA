@@ -3,6 +3,7 @@ from math import *
 
 
 def find_unsign_dom(func1, func2, amosaParams):
+    '''Returns the amount by which func1 dominates func2'''
     d_dominance = 1.0
     for i in range(amosaParams.i_no_offunc):
         if(func1[i]-func2[i] != 0):
@@ -12,6 +13,7 @@ def find_unsign_dom(func1, func2, amosaParams):
 
 
 def is_dominated(func1, func2, amosaParams):
+    '''Checks if func1 dominates func2'''
     i_count_less = 0
     i_count_equal = 0
     for i in range(amosaParams.i_no_offunc):
