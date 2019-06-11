@@ -91,70 +91,73 @@ def runAMOSA(amosaParams):
                         count = count+1
                         amount = find_unsign_dom(
                             amosaParams.dd_func_archive[i], func_new, amosaParams)
-            if(amount < deldom):
-                deldom = amount
-                k = i
+                if(amount < deldom):
+                    deldom = amount
+                    k = i
 
-        # case 3(a): If new point is dominated by k(k>=1) solutions in the archive
-        if(count > 0):
-            p = 1/(1+exp(-deldom))
-            ran2 = random.random()
+                # case 3(a): If new point is dominated by k(k>=1) solutions in the archive
+                if(count > 0):
+                    p = 1/(1+exp(-deldom))
+                    ran2 = random.random()
 
-            # case 3(a).1: Set point of the archive corresponding to deldom as current point with probability = p
-            if(p >= r):
-                current = copy.deepcopy(amosaParams.dd_archive[k])
-                func_current = copy.deepcopy()
-                flag = 1
-                pos = k
+                    # case 3(a).1: Set point of the archive corresponding to deldom as current point with probability = p
+                    if(p >= r):
+                        current = copy.deepcopy(amosaParams.dd_archive[k])
+                        func_current = copy.deepcopy()
+                        flag = 1
+                        pos = k
 
-            # case 3(a).2: Set new point as current point
-            else:
-                current = copy.deepcopy(newsol)
-                func_current = copy.deepcopy(func_new)
-                flag = 0
+                    # case 3(a).2: Set new point as current point
+                    else:
+                        current = copy.deepcopy(newsol)
+                        func_current = copy.deepcopy(func_new)
+                        flag = 0
 
-        # case 3(b): If new point is non-dominating with respect to the point in the archive
-        elif(count == 0 and duplicate == 0):
-            # If current point resides in the archive then remove the current point
-            if (flag == 1):
-                amosaParams.dd_archive.pop(pos)
-                amosaParams.dd_func_archive.pop(pos)
-            amosaParams.i_archivesize = amosaParams.i_archivesize - 1
+                # case 3(b): If new point is non-dominating with respect to the point in the archive
+                elif(count == 0 and duplicate == 0):
+                    # If current point resides in the archive then remove the current point
+                    if (flag == 1):
+                        amosaParams.dd_archive.pop(pos)
+                        amosaParams.dd_func_archive.pop(pos)
+                    amosaParams.i_archivesize = amosaParams.i_archivesize - 1
 
-            area2 = copy.deepcopy(amosaParams.dd_func_archive)
-            archive1 = copy.deep(amosaParams.dd_archive)
+                    area2 = copy.deepcopy(amosaParams.dd_func_archive)
+                    archive1 = copy.deep(amosaParams.dd_archive)
             
-            k = 0
-            # If newsol dominates some other sols in archive then remove them all
-            amosaParams.dd_archive = []
-            amosaParams.dd_func_archive = []
+                    k = 0
+                    # If newsol dominates some other sols in archive then remove them all
+                    amosaParams.dd_archive = []
+                    amosaParams.dd_func_archive = []
 
-            for i in range(amosaParams.i_archivesize):
-                isdom = is_dominated(func_new,area2[i],amosaParams)
-                if isdom:
-                    k = k+1
-                else:
-                    amosaParams.dd_archive.append((archive1[i]))
-                    amosaParams.dd_func_archive.append(area2[i])
+                    for i in range(amosaParams.i_archivesize):
+                        isdom = is_dominated(func_new,area2[i],amosaParams)
+                        if isdom:
+                            k = k+1
+                        else:
+                            amosaParams.dd_archive.append((archive1[i]))
+                            amosaParams.dd_func_archive.append(area2[i])
             
-            if(k>0):
-                amosaParams.i_archivesize = len(amosaParams.dd_archive)
+                    if(k>0):
+                        amosaParams.i_archivesize = len(amosaParams.dd_archive)
             
-            amosaParams.i_archivesize = amosaParams.i_archivesize + 1
-            m = amosaParams.i_archivesize -1
+                    amosaParams.i_archivesize = amosaParams.i_archivesize + 1
+                    m = amosaParams.i_archivesize - 1
             
-            # Adding the newsol to the archive
-            amosaParams.dd_archive.append(newsol)
-            amosaParams.dd_func_archive.appned(func_new)
+                    # Adding the newsol to the archive
+                    amosaParams.dd_archive.append(newsol)
+                    amosaParams.dd_func_archive.appned(func_new)
 
-            # Performing clustering if archive size if greater than soft limit
-            # clustering(amosaParams)
+                    # Performing clustering if archive size if greater than soft limit
+                    # clustering(amosaParams)
 
-            current = copy.deepcopy(newsol)
-            func_current = copy.deepcopy(func_new)
+                    current = copy.deepcopy(newsol)
+                    func_current = copy.deepcopy(func_new)
 
-            flag = 1
-            pos = m
+                    flag = 1
+                    pos = m
+        
+
+            # case 2 :
 
 
         t = round(t - amosaParams.d_alpha, 6)
