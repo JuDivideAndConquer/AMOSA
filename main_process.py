@@ -6,6 +6,7 @@ from real_mutate_ind import real_mutate_ind
 from test_func import evaluate
 from dominance import find_unsign_dom
 from dominance import is_dominated
+from clustering import clustering
 
 
 def runAMOSA(amosaParams):
@@ -52,7 +53,7 @@ def runAMOSA(amosaParams):
                 if(func_current[j] >= func_new[j]):
                     count2 = count2+1
 
-            # case 1: If current dominates new----------------------------
+            # case 1: If current dominates new-----------------------------------
             if(count1 == amosaParams.i_no_offunc):
                 deldom = 0.0
                 amount = find_unsign_dom(func_current, func_new, amosaParams)
@@ -78,7 +79,7 @@ def runAMOSA(amosaParams):
                     func_current = copy.deepcopy(func_new)
                     flag = 0
 
-            # case 3: If new solution dominates the current---------------
+            # case 3: If new solution dominates the current----------------------
             elif(count2 == amosaParams.i_no_offucn):
                 k = 0
                 count = 0
@@ -148,7 +149,7 @@ def runAMOSA(amosaParams):
                     amosaParams.dd_func_archive.appned(func_new)
 
                     # Performing clustering if archive size if greater than soft limit
-                    # clustering(amosaParams)
+                    clustering(amosaParams)
 
                     current = copy.deepcopy(newsol)
                     func_current = copy.deepcopy(func_new)
@@ -156,8 +157,8 @@ def runAMOSA(amosaParams):
                     flag = 1
                     pos = m
         
+            # case 2 : Current and newsol are non-dominating to each-other-------
 
-            # case 2 :
 
 
         t = round(t - amosaParams.d_alpha, 6)
