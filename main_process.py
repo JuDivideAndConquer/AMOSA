@@ -124,26 +124,26 @@ def runAMOSA(amosaParams):
 
                     area2 = copy.deepcopy(amosaParams.dd_func_archive)
                     archive1 = copy.deep(amosaParams.dd_archive)
-            
+
                     k = 0
                     # If newsol dominates some other sols in archive then remove them all
                     amosaParams.dd_archive = []
                     amosaParams.dd_func_archive = []
 
                     for i in range(amosaParams.i_archivesize):
-                        isdom = is_dominated(func_new,area2[i],amosaParams)
+                        isdom = is_dominated(func_new, area2[i], amosaParams)
                         if isdom:
                             k = k+1
                         else:
                             amosaParams.dd_archive.append((archive1[i]))
                             amosaParams.dd_func_archive.append(area2[i])
-            
-                    if(k>0):
+
+                    if(k > 0):
                         amosaParams.i_archivesize = len(amosaParams.dd_archive)
-            
+
                     amosaParams.i_archivesize = amosaParams.i_archivesize + 1
                     m = amosaParams.i_archivesize - 1
-            
+
                     # Adding the newsol to the archive
                     amosaParams.dd_archive.append(newsol)
                     amosaParams.dd_func_archive.appned(func_new)
@@ -156,9 +156,66 @@ def runAMOSA(amosaParams):
 
                     flag = 1
                     pos = m
-        
+
             # case 2 : Current and newsol are non-dominating to each-other-------
+            else:
+                count = 0
+                deldom = 0.0
 
+                for i in range(amosaParams.i_archivesize):
+                    isdom = is_dominated(
+                        amosaParams.dd_func_archive[i], func_new, amosaParams)
+                    if(isdom):
+                        count = count + 1
+                        amount = find_unsign_dom(
+                            amosaParams.dd_func_archive[i], func_new)
+                        deldom = deldom + amount
 
+                # case 2(a) : New point is dominated by k(k>=1) points in the archive
+                if(count > 0):
+                    p = 1.0/(1.0 + exp(deldom / t))
+                    ran2 = random.random()
+                    if(p >= ran2):
+                        current = copy.deepcopy(newsol)
+                        func_current = copy.deepcopy(func_new)
+                        flag = 0
+
+                # case 2(b) : New point is non-dominating with respect to all the points in the archive
+                elif(count == 0):
+                    area2 = copy.deepcopy(amosaParams.dd_func_archive)
+                    archive1 = copy.deepcopy(amosaParams.dd_archive)
+                    k = 0
+                    h = 0
+
+                    amosaParams.dd_archive = []
+                    amosaParams.dd_func_archive = []
+                    for i in range(amosaParams.i_archivesize):
+                        isdom = is_dominated(func_new,area2[i],amosaParams)
+                        if(isdom):
+                            k = k+1
+                        else:
+                            d_func_archive = copy.deepcopy(area2[i])
+                            amosaParams.dd_func_archive.append(d_func_archive)
+                            d_archive = copy.deepcopy(archive1[i])
+                            amosaParams.dd_archive.append(d_archive)
+                            h = h + 1
+
+                    if(k>0):
+                        amosaParams.i_archivesize = h
+
+                    m = amosaParams.i_archivesize
+                    amosaParams.i_archivesize = amosaParams.i_archivesize + 1
+                    d_archive = copy.deepcopy(newsol)
+                    amosaParams.dd_archive.append(d_archive)
+                    d_func_archive = copy.deepcopy(func_new)
+                    amosaParams.dd_func_archive(d_func_archive)
+
+                    if(amosaParams.i_archivesize > amosaParams.i_softl):
+                        clustering(amosaParams)
+                    
+                    current = copy.deepcopy(newsol)
+                    func_current = copy.deepcopy(func_new)
+                    flag = 1
+                    pos = m
 
         t = round(t - amosaParams.d_alpha, 6)
