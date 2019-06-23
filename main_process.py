@@ -38,6 +38,11 @@ def runAMOSA(amosaParams):
     while(t >= amosaParams.d_tmin):
         print('Temperature: ' + str(t))
 
+        # Setting range of function
+        for i in range(amosaParams.i_no_offunc):
+            amosaParams.d_func_range.append(
+                max(amosaParams.dd_func_archive[i]) - min(amosaParams.dd_func_archive[i]))
+
         for i in range(amosaParams.i_no_ofiter):
             duplicate = 0
             newsol = copy.deepcopy(current)
@@ -219,3 +224,9 @@ def runAMOSA(amosaParams):
                     pos = m
 
         t = round(t - amosaParams.d_alpha, 6)
+
+    with open('saplot.out','w+') as fp:
+        for i in range(amosaParams.i_archivesize):
+            fp.write('\n')
+            for h in range(amosaParams.i_no_offunc):
+                fp.write("\t" + str(amosaParams.dd_func_archive[i][h]))
