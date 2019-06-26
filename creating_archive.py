@@ -14,10 +14,7 @@ def creating_archive(amosaParams):
     for i in range(amosaParams.i_softl):
         d_eval = evaluate(
             amosaParams.dd_solution[i], amosaParams.c_problem, amosaParams.i_no_offunc)
-        d_area = []
-        for j in range(amosaParams.i_no_offunc):
-            d_area.append(d_eval[j])
-        dd_area.append(d_area)
+        dd_area.append(d_eval)
         i_flag.append(1)
 
     # Checking for dominated solutions, if the solutions are dominated their flag is set to 0

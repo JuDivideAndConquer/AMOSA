@@ -3,28 +3,26 @@ from math import *
 
 
 def real_mutate_ind(s, amosaParam):
-    ''' Function to perform mutation on individual input vector'''
+    '''Function to perform mutation on individual input vector'''
 
     i_rand = random.randint(0, amosaParam.i_totalno_var - 1)
     y = s[i_rand]
-    mutate(y, amosaParam)
+    mutate(y, amosaParam,i_rand)
 
     i_count = 0
     while((y < amosaParam.d_min_real_var[i_rand] or y > amosaParam.d_max_real_var[i_rand]) and i_count < amosaParam.i_hillclimb_no):
         y = s[i_rand]
-        mutate(y, amosaParam)
+        mutate(y, amosaParam,i_rand)
         i_count = i_count + 1
 
     # Update input vector element
+    '''
+    if(y>amosaParam.d_max_real_var[i_rand]):
+        y=amosaParam.d_max_real_var[i_rand]
+    elif(y<amosaParam.d_min_real_var[i_rand]):
+        y=amosaParam.d_min_real_var[i_rand]
+    '''
     s[i_rand] = y
-
-    # Update minimum and maximum values
-    if(i_count == 20):
-        if(s[i_rand < amosaParam.d_min_real_var[i_rand]]):
-            s[i_rand] = amosaParam.d_min_real_var[i_rand]
-        elif(s[i_rand] > amosaParam.d_max_real_var[i_rand]):
-            s[i_rand] = amosaParam.d_max_real_var[i_rand]
-    return
 
 
 def rand():
@@ -36,7 +34,7 @@ def rand():
     return x
 
 
-def mutate(y, amosaParam):
+def mutate(y, amosaParam,i_rand):
     '''Perform mutation on individual vector element'''
     b = 0.25
     d_rand = rand()
