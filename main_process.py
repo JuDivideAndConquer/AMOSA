@@ -7,7 +7,8 @@ from test_func import evaluate
 from dominance import find_unsign_dom
 from dominance import is_dominated
 from clustering import clustering
-
+import matplotlib.pyplot as plt
+from mpl_toolkits import mplot3d
 
 def runAMOSA(amosaParams):
     r = int()
@@ -38,12 +39,10 @@ def runAMOSA(amosaParams):
     while(t >= amosaParams.d_tmin):
         print('Temperature: ' + str(t))
 
-        '''
         # Setting range of function
         for i in range(amosaParams.i_no_offunc):
             amosaParams.d_func_range.append(
                 max(amosaParams.dd_func_archive[i]) - min(amosaParams.dd_func_archive[i]))
-        '''
 
         for i in range(amosaParams.i_no_ofiter):
             duplicate = 0
@@ -227,14 +226,35 @@ def runAMOSA(amosaParams):
 
         t = round(t - amosaParams.d_alpha, 6)
 
-    with open('saplot.out','w+') as fp:
+    #with open('saplot.out','w+') as fp:
+    obj1 = []
+    obj2 = []
+    obj3 = []
+    with open('objective_values.txt', 'w+') as fp:
+
         for i in range(amosaParams.i_archivesize):
             fp.write('\n')
             for h in range(amosaParams.i_no_offunc):
                 fp.write("\t" + str(amosaParams.dd_func_archive[i][h]))
+                if h == 0:
+                    obj1.append(amosaParams.dd_func_archive[i][h])
+                elif h == 1:
+                    obj2.append(amosaParams.dd_func_archive[i][h])
+                elif h == 2:
+                    obj3.append(amosaParams.dd_func_archive[i][h])
 
-    with open('saplot1.out','w+') as fp:
+    with open('decision_values.txt', 'w+') as fp:
         for i in range(amosaParams.i_archivesize):
             fp.write('\n')
             for h in range(amosaParams.i_totalno_var):
                 fp.write("\t" + str(amosaParams.dd_archive[i][h]))
+
+    if amosaParams.i_no_offunc == 2:
+        plt.plot(obj1, obj2, 'ro')
+        plt.show()
+    elif amosaParams.i_no_offunc == 3:
+        fig = plt.figure()
+        ax = plt.axes(projection='3d')
+        ax.scatter3D(obj1, obj2, obj3)
+        plt.show()
+
