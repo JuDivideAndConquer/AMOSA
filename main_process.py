@@ -108,9 +108,9 @@ def runAMOSA(amosaParams):
                     ran2 = random.random()
 
                     # case 3(a).1: Set point of the archive corresponding to deldom as current point with probability = p
-                    if(p >= r):
+                    if(p >= ran2):
                         current = copy.deepcopy(amosaParams.dd_archive[k])
-                        func_current = copy.deepcopy()
+                        func_current = copy.deepcopy(amosaParams.dd_func_archive[k])
                         flag = 1
                         pos = k
 
@@ -129,7 +129,7 @@ def runAMOSA(amosaParams):
                     amosaParams.i_archivesize = amosaParams.i_archivesize - 1
 
                     area2 = copy.deepcopy(amosaParams.dd_func_archive)
-                    archive1 = copy.deep(amosaParams.dd_archive)
+                    archive1 = copy.deepcopy(amosaParams.dd_archive)
 
                     k = 0
                     # If newsol dominates some other sols in archive then remove them all
@@ -152,7 +152,7 @@ def runAMOSA(amosaParams):
 
                     # Adding the newsol to the archive
                     amosaParams.dd_archive.append(newsol)
-                    amosaParams.dd_func_archive.appned(func_new)
+                    amosaParams.dd_func_archive.appnend(func_new)
 
                     # Performing clustering if archive size if greater than soft limit
                     clustering(amosaParams)
@@ -174,7 +174,7 @@ def runAMOSA(amosaParams):
                     if(isdom):
                         count = count + 1
                         amount = find_unsign_dom(
-                            amosaParams.dd_func_archive[i], func_new)
+                            amosaParams.dd_func_archive[i], func_new,amosaParams)
                         deldom = deldom + amount
 
                 # case 2(a) : New point is dominated by k(k>=1) points in the archive
@@ -214,7 +214,7 @@ def runAMOSA(amosaParams):
                     d_archive = copy.deepcopy(newsol)
                     amosaParams.dd_archive.append(d_archive)
                     d_func_archive = copy.deepcopy(func_new)
-                    amosaParams.dd_func_archive(d_func_archive)
+                    amosaParams.dd_func_archive.append(d_func_archive)
 
                     if(amosaParams.i_archivesize > amosaParams.i_softl):
                         clustering(amosaParams)

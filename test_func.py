@@ -1,7 +1,8 @@
 from math import *
 from amosa import AMOSAType
 
-VALID_FUNC = ['SCH1', 'SCH2', 'DTLZ1', 'DTLZ2', 'DTLZ3', 'DTLZ4']
+VALID_FUNC = ['SCH1', 'SCH2', 'DTLZ1', 'DTLZ2', 'DTLZ3',
+              'DTLZ4', 'ZDT1', 'ZDT2', 'ZDT3', 'ZDT4', 'ZDT5', 'ZDT6']
 
 
 def init_functions(func):
@@ -18,10 +19,14 @@ def init_functions(func):
         k = int()
         if(func == 'DTLZ1'):
             k = 5
-        elif(func in ['DTLZ2','DTLZ3','DTLZ4']):
+        elif(func in ['DTLZ2', 'DTLZ3', 'DTLZ4']):
             k = 10
         var = obj + k - 1
         print("Number of variables: " + str(var))
+    elif(func in ['ZDT1', 'ZDT2', 'ZDT3', 'ZDT4', 'ZDT5', 'ZDT6']):
+        print("Number of objective functions: 2")
+        obj = 2
+        var = int(input("Enter  the number of variables: "))
     else:
         obj = int(input("Enter the number of objective functions: "))
         var = int(input("Enter  the number of variables: "))
@@ -47,9 +52,77 @@ def evaluate(input, c_problem, i_no_offunc):
     elif(c_problem == 'DTLZ4'):
         d_eval = DTLZ4(input, i_no_offunc)
         return d_eval
+    elif(c_problem == 'ZDT1'):
+        d_eval = ZDT1(input)
+        return d_eval
+    elif(c_problem == 'ZDT2'):
+        d_eval = ZDT2(input)
+        return d_eval
+    elif(c_problem == 'ZDT3'):
+        d_eval = ZDT3(input)
+        return d_eval
+    elif(c_problem == 'ZDT4'):
+        d_eval = ZDT4(input)
+        return d_eval
+    elif(c_problem == 'ZDT5'):
+        d_eval = ZDT5(input)
+        return d_eval
+    elif(c_problem == 'ZDT6'):
+        d_eval = ZDT6(input)
+        return d_eval
     else:
         print('Invalid arguement for amosaParams.c_problem\nExiting.')
         exit()
+
+
+def ZDT1(input_arr):
+    f1 = input_arr[0]
+    s = 0.0
+    for i in range(1, len(input_arr)):
+        s = s + input_arr[i]
+    g = 1.0 + ((9.0*s)/(len(input_arr)-1.0))
+    f2 = g * (1.0 - sqrt(f1/g))
+    return [f1, f2]
+
+
+def ZDT2(input_arr):
+    f1 = input_arr[0]
+    s = 0.0
+    for i in range(1, len(input_arr)):
+        s = s + input_arr[i]
+    g = 1.0 + ((9.0*s)/(len(input_arr)-1.0))
+    f2 = g*(1.0 - ((f1/g)**2))
+    return [f1, f2]
+
+
+def ZDT3(input_arr):
+    f1 = input_arr[0]
+    s = 0.0
+    for i in range(1, len(input_arr)):
+        s = s + input_arr[i]
+    g = 1.0 + ((9.0*s)/(len(input_arr)-1.0))
+    f2 = g*(1.0 - sqrt(f1/g) - ((f1/g)*sin(10.0*3.14*f1)))
+    return [f1, f2]
+
+
+def ZDT4(input_arr):
+    f1 = input_arr[0]
+    s = 0.0
+    for i in range(1, len(input_arr)):
+        s = s + ((input_arr[i]**2) - (10.0*cos(4*3.14*input_arr[i])))
+    g = 1.0 + (10.0*(len(input_arr)-1.0)) + s
+    f2 = g*(1.0 - ((f1/g)**2))
+    return [f1, f2]
+
+
+def ZDT6(input_arr):
+    f1 = 1.0 - (exp(-4.0*input_arr[0])*((sin(6.0*3.14*input_arr[0]))**6))
+    s = 0.0
+    for i in range(1, len(input_arr)):
+        s = s + input_arr[i]
+    g = 1.0 + 9.0*((s/(len(input_arr)-1.0))**0.25)
+    f2 = 1.0 - ((f1/g)**2)
+    return [f1, f2]
 
 
 def DTLZ1(input_arr, n_obj):
@@ -153,10 +226,6 @@ def SCH2(input):
 
 
 # functions left:
-# DTLZ110
-# DTLZ115
-# DTLZ15
-# DTLZ24
 # DTLZ5
 # DTLZ7
 # Dev1

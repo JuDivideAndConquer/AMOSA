@@ -13,7 +13,7 @@ class AMOSAType:
 
     d_tmax = float()        # Maximum temperature
     d_tmin = float()        # Minimum temperature
-    d_aplha = float()       # Cooing rate
+    d_alpha = float()       # Cooing rate
     dd_solution = []		# Data structure corresponding to binary strings
     dd_archive = []			# Archive
     dd_func_archive = []  	# Variable to store the fucntion values of the archive solutions

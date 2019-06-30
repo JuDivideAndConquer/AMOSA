@@ -46,11 +46,17 @@ def readParameters(amosaParams):
         exit()
 
     # Setting the range of values of variables
-    for i in range(amosaParams.i_totalno_var):
+    '''for i in range(amosaParams.i_totalno_var):
         amosaParams.d_min_real_var.append(
             float(input('Enter the minimim value of real-variable '+str(i)+': ')))
         amosaParams.d_max_real_var.append(
-            float(input('Enter the maximum value of real-variable '+str(i)+': ')))
+            float(input('Enter the maximum value of real-variable '+str(i)+': ')))'''
+    for i in range(amosaParams.i_totalno_var):
+        amosaParams.d_min_real_var.append(0.0)
+        amosaParams.d_max_real_var.append(1.0)
+    
+    print (amosaParams.d_min_real_var)
+    print (amosaParams.d_max_real_var)
 
     # Initialize the solution
     initialize_sol(amosaParams)
