@@ -9,6 +9,8 @@ from dominance import is_dominated
 from clustering import clustering
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
+from real_time_plot import real_time_plot
+
 
 def runAMOSA(amosaParams):
     r = int()
@@ -16,6 +18,7 @@ def runAMOSA(amosaParams):
     flag = int()
     pos = int()
     deldom = float()
+    amount = float()
     p = float()
     count = int()
     current = []
@@ -23,6 +26,7 @@ def runAMOSA(amosaParams):
     func_new = []
     newsol = []
     d_eval = []
+    real_time_graph_data = []
 
     p2 = amosaParams.i_softl + 3
     p1 = amosaParams.i_archivesize - 1
@@ -37,12 +41,7 @@ def runAMOSA(amosaParams):
 
     t = amosaParams.d_tmax
     while(t >= amosaParams.d_tmin):
-        print('Temperature: ' + str(t))
-
-        # Setting range of function
-        for i in range(amosaParams.i_no_offunc):
-            amosaParams.d_func_range.append(
-                max(amosaParams.dd_func_archive[i]) - min(amosaParams.dd_func_archive[i]))
+        print('Temperature: ' + str(t), end='\r')
 
         for i in range(amosaParams.i_no_ofiter):
             duplicate = 0
@@ -61,6 +60,7 @@ def runAMOSA(amosaParams):
 
             # case 1: If current dominates new-----------------------------------
             if(count1 == amosaParams.i_no_offunc):
+                #print('Current solution domiantes new solution')
                 deldom = 0.0
                 amount = find_unsign_dom(func_current, func_new, amosaParams)
                 deldom = deldom + amount
@@ -86,11 +86,11 @@ def runAMOSA(amosaParams):
                     flag = 0
 
             # case 3: If new solution dominates the current----------------------
-            elif(count2 == amosaParams.i_no_offucn):
+            elif(count2 == amosaParams.i_no_offunc):
                 k = 0
                 count = 0
                 deldom = 10000000000000
-
+                #print('New solution dominates current solution')
                 for i in range(amosaParams.i_archivesize):
                     isdom = is_dominated(
                         amosaParams.dd_func_archive[i], func_new, amosaParams)
@@ -110,7 +110,8 @@ def runAMOSA(amosaParams):
                     # case 3(a).1: Set point of the archive corresponding to deldom as current point with probability = p
                     if(p >= ran2):
                         current = copy.deepcopy(amosaParams.dd_archive[k])
-                        func_current = copy.deepcopy(amosaParams.dd_func_archive[k])
+                        func_current = copy.deepcopy(
+                            amosaParams.dd_func_archive[k])
                         flag = 1
                         pos = k
 
@@ -152,7 +153,7 @@ def runAMOSA(amosaParams):
 
                     # Adding the newsol to the archive
                     amosaParams.dd_archive.append(newsol)
-                    amosaParams.dd_func_archive.appnend(func_new)
+                    amosaParams.dd_func_archive.append(func_new)
 
                     # Performing clustering if archive size if greater than soft limit
                     clustering(amosaParams)
@@ -167,14 +168,14 @@ def runAMOSA(amosaParams):
             else:
                 count = 0
                 deldom = 0.0
-
+                #print('Current solution and new solution are non dominating to eachother')
                 for i in range(amosaParams.i_archivesize):
                     isdom = is_dominated(
                         amosaParams.dd_func_archive[i], func_new, amosaParams)
                     if(isdom):
                         count = count + 1
                         amount = find_unsign_dom(
-                            amosaParams.dd_func_archive[i], func_new,amosaParams)
+                            amosaParams.dd_func_archive[i], func_new, amosaParams)
                         deldom = deldom + amount
 
                 # case 2(a) : New point is dominated by k(k>=1) points in the archive
@@ -196,7 +197,7 @@ def runAMOSA(amosaParams):
                     amosaParams.dd_archive = []
                     amosaParams.dd_func_archive = []
                     for i in range(amosaParams.i_archivesize):
-                        isdom = is_dominated(func_new,area2[i],amosaParams)
+                        isdom = is_dominated(func_new, area2[i], amosaParams)
                         if(isdom):
                             k = k+1
                         else:
@@ -206,7 +207,7 @@ def runAMOSA(amosaParams):
                             amosaParams.dd_archive.append(d_archive)
                             h = h + 1
 
-                    if(k>0):
+                    if(k > 0):
                         amosaParams.i_archivesize = h
 
                     m = amosaParams.i_archivesize
@@ -218,15 +219,28 @@ def runAMOSA(amosaParams):
 
                     if(amosaParams.i_archivesize > amosaParams.i_softl):
                         clustering(amosaParams)
-                    
+
                     current = copy.deepcopy(newsol)
                     func_current = copy.deepcopy(func_new)
                     flag = 1
                     pos = m
 
+        if(amosaParams.i_no_offunc == 3):
+            x1 = []
+            x2 = []
+            x3 = []
+            for i in range(amosaParams.i_archivesize):
+                x1.append(amosaParams.dd_func_archive[i][0])
+                x2.append(amosaParams.dd_func_archive[i][1])
+                x3.append(amosaParams.dd_func_archive[i][2])
+            real_time_graph_data.append([x1, x2, x3])
+
         t = round(t - amosaParams.d_alpha, 6)
 
-    #with open('saplot.out','w+') as fp:
+    if(amosaParams.i_no_offunc == 3):
+        real_time_plot(real_time_graph_data)
+
+    # with open('saplot.out','w+') as fp:
     obj1 = []
     obj2 = []
     obj3 = []
@@ -257,4 +271,3 @@ def runAMOSA(amosaParams):
         ax = plt.axes(projection='3d')
         ax.scatter3D(obj1, obj2, obj3)
         plt.show()
-

@@ -28,10 +28,8 @@ def clustering(amosaParams):
         for j in range(i+1, k):
             dd_distance[i][j] = 0
             for k in range(amosaParams.i_no_offunc):
-                dd_distance[i][j] = dd_distance[i][j] + \
-                    (amosaParams.dd_func_archive[i][k] -
-                     amosaParams.dd_func_archive[j][k]) ^ 2
-            dd_distance[j][i] = (dd_distance[i][j]) ^ 0.5
+                dd_distance[i][j] = dd_distance[i][j] + (amosaParams.dd_func_archive[i][k] - amosaParams.dd_func_archive[j][k])*(amosaParams.dd_func_archive[i][k] - amosaParams.dd_func_archive[j][k])
+            dd_distance[j][i] = math.sqrt(dd_distance[i][j])
 
     # finding the pair of points with minimum distances
     while(no_clus > amosaParams.i_hardl):

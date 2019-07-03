@@ -6,6 +6,7 @@ from test_func import init_functions
 from init_sol import initialize_sol
 from creating_archive import creating_archive
 from main_process import runAMOSA
+import math
 
 
 def readParameters(amosaParams):
@@ -66,8 +67,14 @@ def readParameters(amosaParams):
 
     # Setting range of function
     for i in range(amosaParams.i_no_offunc):
-        amosaParams.d_func_range.append(
-            max(amosaParams.dd_func_archive[i]) - min(amosaParams.dd_func_archive[i]))
+        d_max = - math.inf
+        d_min = math.inf
+        for j in range(len(amosaParams.dd_func_archive)):
+            if(amosaParams.dd_func_archive[j][i]>d_max):
+                d_max = amosaParams.dd_func_archive[j][i]
+            if(amosaParams.dd_func_archive[j][i]<d_min):
+                d_min = amosaParams.dd_func_archive[j][i]
+        amosaParams.d_func_range.append(d_max-d_min)
 
 
 '''Main function (Execution starting point)'''
