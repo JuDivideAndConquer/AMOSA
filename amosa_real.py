@@ -29,10 +29,10 @@ def readParameters(amosaParams):
         exit()
 
     # Setting the number of iterations per temperature
-    amosaParams.i_no_ofiter = 500
+    amosaParams.i_no_ofiter = 1000
 
     # Setting temperature limits
-    amosaParams.d_tmin = 0.000025
+    amosaParams.d_tmin = 0.0025
     amosaParams.d_tmax = 100
 
     # Function range according to input variables

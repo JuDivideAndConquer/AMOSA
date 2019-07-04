@@ -52,7 +52,7 @@ def clustering(amosaParams):
 
         no_clus = no_clus - 1
         g = 0
-        point1 = [g] = u
+        point1[0] = g = u
         j = cluster[u]
 
         while(j != u):
