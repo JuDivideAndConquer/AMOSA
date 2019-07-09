@@ -12,7 +12,6 @@ from mpl_toolkits import mplot3d
 from real_time_plot import real_time_plot
 import math
 
-
 def runAMOSA(amosaParams):
     r = int()
     k = int()
@@ -42,8 +41,7 @@ def runAMOSA(amosaParams):
 
     t = amosaParams.d_tmax
     while(t >= amosaParams.d_tmin):
-        print('Temperature: ' + str(t))#, end='\r')
-
+        print('Temperature: ' + str(t), end='\r')
         for i in range(amosaParams.i_no_ofiter):
             duplicate = 0
             newsol = copy.deepcopy(current)
@@ -77,7 +75,12 @@ def runAMOSA(amosaParams):
                             deldom = deldom + amount
 
                 # Probablity for case 1
-                p = 1.0/(1.0 + exp(deldom/t))
+                expp = float()
+                try:
+                    expp = exp(deldom/t)
+                except OverflowError:
+                    expp = math.inf
+                p = 1.0/(1.0 + expp)
 
                 # Selecting the new solution with probability p
                 ran2 = random.random()
@@ -148,6 +151,11 @@ def runAMOSA(amosaParams):
                     if(k > 0):
                         amosaParams.i_archivesize = len(amosaParams.dd_archive)
 
+                    #edited position for cluster
+                    # Performing clustering if archive size if greater than soft limit
+                    if(amosaParams.i_archivesize>amosaParams.i_softl):
+                        clustering(amosaParams)
+
                     amosaParams.i_archivesize = amosaParams.i_archivesize + 1
                     m = amosaParams.i_archivesize - 1
 
@@ -155,9 +163,7 @@ def runAMOSA(amosaParams):
                     amosaParams.dd_archive.append(newsol)
                     amosaParams.dd_func_archive.append(func_new)
 
-                    # Performing clustering if archive size if greater than soft limit
-                    if(len(amosaParams.i_archivesize)>amosaParams.i_softl):
-                        clustering(amosaParams)
+                    #actural clustering done 
 
                     current = copy.deepcopy(newsol)
                     func_current = copy.deepcopy(func_new)
@@ -181,7 +187,12 @@ def runAMOSA(amosaParams):
 
                 # case 2(a) : New point is dominated by k(k>=1) points in the archive
                 if(count > 0):
-                    p = 1.0/(1.0 + exp(deldom / t))
+                    expp = float()
+                    try:
+                        expp = exp(deldom/t)
+                    except OverflowError:
+                        expp = math.inf
+                    p = 1.0/(1.0 + expp)
                     ran2 = random.random()
                     if(p >= ran2):
                         current = copy.deepcopy(newsol)
@@ -212,6 +223,10 @@ def runAMOSA(amosaParams):
                     if(k > 0):
                         amosaParams.i_archivesize = len(amosaParams.dd_archive)
 
+                    #Reshifted clustering
+                    if(amosaParams.i_archivesize > amosaParams.i_softl):
+                        clustering(amosaParams)
+
                     m = amosaParams.i_archivesize
                     amosaParams.i_archivesize = amosaParams.i_archivesize + 1
                     d_archive = copy.deepcopy(newsol)
@@ -219,8 +234,7 @@ def runAMOSA(amosaParams):
                     d_func_archive = copy.deepcopy(func_new)
                     amosaParams.dd_func_archive.append(d_func_archive)
 
-                    if(amosaParams.i_archivesize > amosaParams.i_softl):
-                        clustering(amosaParams)
+                    #actual clustering position
 
                     current = copy.deepcopy(newsol)
                     func_current = copy.deepcopy(func_new)
@@ -237,7 +251,7 @@ def runAMOSA(amosaParams):
                 x3.append(amosaParams.dd_func_archive[i][2])
             real_time_graph_data.append([x1, x2, x3])
 
-        t = round(t - amosaParams.d_alpha, 6)
+        t = round(t * amosaParams.d_alpha, 6)
 
     if(amosaParams.i_no_offunc == 3):
         real_time_plot(real_time_graph_data)
