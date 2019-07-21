@@ -19,7 +19,7 @@ def is_dominated(func1, func2, amosaParams):
     for i in range(amosaParams.i_no_offunc):
         if(func1[i] < func2[i]):
             i_count_less = i_count_less + 1
-        elif(func1 == func2):
+        elif(func1[i] == func2[i]):
             i_count_equal = i_count_equal + 1
     if(((i_count_equal+i_count_less) == amosaParams.i_no_offunc) and i_count_less > 0):
         return True
