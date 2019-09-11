@@ -40,8 +40,12 @@ def runAMOSA(amosaParams):
     func_current = copy.deepcopy(amosaParams.dd_func_archive[r])
 
     t = amosaParams.d_tmax
+    tt=0
+
+    def consoleprint(case,i):
+        print(  'iteration: ' + str(i) +'\t\t'+ 'case ' + str(case) + '\t'+ 'archivesize: ' + str(amosaParams.i_archivesize) + '\t\t\t'+ str(tt) + 'th temp \t Temperature: ' + str(t), end='\r')
+
     while(t >= amosaParams.d_tmin):
-        print('Temperature: ' + str(t), end='\r')
         for i in range(amosaParams.i_no_ofiter):
             duplicate = 0
             newsol = copy.deepcopy(current)
@@ -59,7 +63,7 @@ def runAMOSA(amosaParams):
 
             # case 1: If current dominates new-----------------------------------
             if(count1 == amosaParams.i_no_offunc):
-                #print('Current solution domiantes new solution')
+                consoleprint(1,i)
                 deldom = 0.0
                 amount = find_unsign_dom(func_current, func_new, amosaParams)
                 deldom = deldom + amount
@@ -74,7 +78,7 @@ def runAMOSA(amosaParams):
                                 amosaParams.dd_func_archive[j], func_new, amosaParams)
                             deldom = deldom + amount
 
-                # Probablity for case 1
+                # Probability for case 1
                 expp = float()
                 try:
                     expp = exp(deldom/t)
@@ -94,7 +98,7 @@ def runAMOSA(amosaParams):
                 k = 0
                 count = 0
                 deldom = math.inf
-                #print('New solution dominates current solution')
+                consoleprint(3,i)
                 for j in range(amosaParams.i_archivesize):
                     isdom = is_dominated(
                         amosaParams.dd_func_archive[j], func_new, amosaParams)
@@ -151,9 +155,9 @@ def runAMOSA(amosaParams):
                     if(k > 0):
                         amosaParams.i_archivesize = len(amosaParams.dd_archive)
 
-                    #edited position for cluster
+                    # edited position for cluster
                     # Performing clustering if archive size if greater than soft limit
-                    if(amosaParams.i_archivesize>amosaParams.i_softl):
+                    if(amosaParams.i_archivesize > amosaParams.i_softl):
                         clustering(amosaParams)
 
                     amosaParams.i_archivesize = amosaParams.i_archivesize + 1
@@ -163,7 +167,7 @@ def runAMOSA(amosaParams):
                     amosaParams.dd_archive.append(newsol)
                     amosaParams.dd_func_archive.append(func_new)
 
-                    #actural clustering done 
+                    # actural clustering done
 
                     current = copy.deepcopy(newsol)
                     func_current = copy.deepcopy(func_new)
@@ -175,7 +179,7 @@ def runAMOSA(amosaParams):
             else:
                 count = 0
                 deldom = 0.0
-                #print('Current solution and new solution are non dominating to eachother')
+                consoleprint(2,i)
                 for j in range(amosaParams.i_archivesize):
                     isdom = is_dominated(
                         amosaParams.dd_func_archive[j], func_new, amosaParams)
@@ -223,7 +227,7 @@ def runAMOSA(amosaParams):
                     if(k > 0):
                         amosaParams.i_archivesize = len(amosaParams.dd_archive)
 
-                    #Reshifted clustering
+                    # Re shifted clustering
                     if(amosaParams.i_archivesize > amosaParams.i_softl):
                         clustering(amosaParams)
 
@@ -234,7 +238,7 @@ def runAMOSA(amosaParams):
                     d_func_archive = copy.deepcopy(func_new)
                     amosaParams.dd_func_archive.append(d_func_archive)
 
-                    #actual clustering position
+                    # actual clustering position
 
                     current = copy.deepcopy(newsol)
                     func_current = copy.deepcopy(func_new)
@@ -252,6 +256,7 @@ def runAMOSA(amosaParams):
             real_time_graph_data.append([x1, x2, x3])
 
         t = round(t * amosaParams.d_alpha, 6)
+        tt=tt+1
 
     if(amosaParams.i_no_offunc == 3):
         real_time_plot(real_time_graph_data)
