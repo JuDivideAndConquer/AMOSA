@@ -14,9 +14,9 @@ class form_ref_points(object):
         print(self.points)
         print(len(self.points))
 
-    def recursivePointsGenerate(self,layer,point):
+    def recursivePointsGenerate(self, layer, point):
         '''Generates the points recursively. Every permutation of values in layer is generated'''
-        if(len(point)==self.m):
+        if(len(point) == self.m):
             # If point is an m dimensional vector
             self.allPoints.append(point)
         else:
@@ -24,7 +24,7 @@ class form_ref_points(object):
             for i in range(len(layer)):
                 point_next = copy.deepcopy(point)
                 point_next.append(layer[i])
-                self.recursivePointsGenerate(layer,copy.deepcopy(point_next))
+                self.recursivePointsGenerate(layer, copy.deepcopy(point_next))
 
     def form(self):
         layer = []
@@ -32,16 +32,16 @@ class form_ref_points(object):
             layer.append(float(i)/float(self.n))
         # layer holds the n+1 division in the range [0,1]
 
-        self.recursivePointsGenerate(layer,[])
+        self.recursivePointsGenerate(layer, [])
 
-        for i in range(0,len(self.allPoints)):
+        for i in range(0, len(self.allPoints)):
             s = sum(self.allPoints[i])
-            if(s==1):
+            if(s == 1):
                 self.points.append(self.allPoints[i])
 
 
 # Entry point ----------------------------------
-def getRefPoints(n_obj,divisions):
+def getRefPoints(n_obj, divisions):
     '''returns generated reference points'''
-    refPoints = form_ref_points(n_obj,divisions)
+    refPoints = form_ref_points(n_obj, divisions)
     return refPoints.points
