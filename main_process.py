@@ -255,10 +255,22 @@ def runAMOSA(amosaParams):
                 x3.append(amosaParams.dd_func_archive[i][2])
             real_time_graph_data.append([x1, x2, x3])
 
+        if(amosaParams.i_no_offunc == 2):
+            x1 = []
+            x2 = []
+            for i in range(len(amosaParams.dd_archive)):
+                x1.append(amosaParams.dd_func_archive[i][0])
+                x2.append(amosaParams.dd_func_archive[i][1])
+            real_time_graph_data.append([x1, x2])
+
+
         t = round(t * amosaParams.d_alpha, 6)
         tt=tt+1
 
     if(amosaParams.i_no_offunc == 3):
+        real_time_plot(real_time_graph_data)
+
+    if(amosaParams.i_no_offunc == 2):
         real_time_plot(real_time_graph_data)
 
     # with open('saplot.out','w+') as fp:
@@ -269,14 +281,15 @@ def runAMOSA(amosaParams):
 
         for i in range(amosaParams.i_archivesize):
             fp.write('\n')
-            for h in range(amosaParams.i_no_offunc):
-                fp.write("\t" + str(amosaParams.dd_func_archive[i][h]))
-                if h == 0:
-                    obj1.append(amosaParams.dd_func_archive[i][h])
-                elif h == 1:
-                    obj2.append(amosaParams.dd_func_archive[i][h])
-                elif h == 2:
-                    obj3.append(amosaParams.dd_func_archive[i][h])
+            if(amosaParams.dd_func_archive[i][0]<2.5 and amosaParams.dd_func_archive[i][1]<2.5 and amosaParams.dd_func_archive[i][2]<2.5 ):#debug
+                for h in range(amosaParams.i_no_offunc):
+                    fp.write("\t" + str(amosaParams.dd_func_archive[i][h]))
+                    if h == 0:
+                        obj1.append(amosaParams.dd_func_archive[i][h])
+                    elif h == 1:
+                        obj2.append(amosaParams.dd_func_archive[i][h])
+                    elif h == 2:
+                        obj3.append(amosaParams.dd_func_archive[i][h])
 
     with open('decision_values.txt', 'w+') as fp:
         for i in range(amosaParams.i_archivesize):
