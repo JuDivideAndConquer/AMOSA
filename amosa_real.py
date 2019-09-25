@@ -47,17 +47,19 @@ def readParameters(amosaParams):
         exit()
 
     # Setting the range of values of variables
-    '''for i in range(amosaParams.i_totalno_var):
+    for i in range(amosaParams.i_totalno_var):
         amosaParams.d_min_real_var.append(
             float(input('Enter the minimim value of real-variable '+str(i)+': ')))
         amosaParams.d_max_real_var.append(
-            float(input('Enter the maximum value of real-variable '+str(i)+': ')))'''
+            float(input('Enter the maximum value of real-variable '+str(i)+': ')))
+    '''
     for i in range(amosaParams.i_totalno_var):
         amosaParams.d_min_real_var.append(0.0)
         amosaParams.d_max_real_var.append(1.0)
-    
-    print (amosaParams.d_min_real_var)
-    print (amosaParams.d_max_real_var)
+    '''
+
+    print(amosaParams.d_min_real_var)
+    print(amosaParams.d_max_real_var)
 
     # Initialize the solution
     initialize_sol(amosaParams)
@@ -68,18 +70,19 @@ def readParameters(amosaParams):
     # Setting range of function
     for i in range(amosaParams.i_no_offunc):
         d_max = - math.inf
-        d_min = math.inf
+        # d_min = math.inf
+        d_idea_point = 0
         for j in range(len(amosaParams.dd_func_archive)):
-            if(amosaParams.dd_func_archive[j][i]>d_max):
+            if(amosaParams.dd_func_archive[j][i] > d_max):
                 d_max = amosaParams.dd_func_archive[j][i]
-            if(amosaParams.dd_func_archive[j][i]<d_min):
-                d_min = amosaParams.dd_func_archive[j][i]
-        amosaParams.d_func_range.append(d_max-d_min)
-
+            # if(amosaParams.dd_func_archive[j][i] < d_min):
+            #     d_min = amosaParams.dd_func_archive[j][i]
+        #amosaParams.d_func_range.append(d_max-d_min)
+        amosaParams.d_func_range.append(d_max-d_idea_point)
 
 '''Main function (Execution starting point)'''
 amosaParams = AMOSAType()
 readParameters(amosaParams)
 
-# Calling the main fucntion which runs the algorithm proposed in AMOSA
+# Calling the main function which runs the algorithm proposed in AMOSA
 runAMOSA(amosaParams)

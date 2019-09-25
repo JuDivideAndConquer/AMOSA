@@ -227,7 +227,7 @@ def runAMOSA(amosaParams):
                     if(k > 0):
                         amosaParams.i_archivesize = len(amosaParams.dd_archive)
 
-                    # Re shifted clustering
+                    # clustering
                     if(amosaParams.i_archivesize > amosaParams.i_softl):
                         clustering(amosaParams)
 
@@ -238,7 +238,6 @@ def runAMOSA(amosaParams):
                     d_func_archive = copy.deepcopy(func_new)
                     amosaParams.dd_func_archive.append(d_func_archive)
 
-                    # actual clustering position
 
                     current = copy.deepcopy(newsol)
                     func_current = copy.deepcopy(func_new)
@@ -281,15 +280,15 @@ def runAMOSA(amosaParams):
 
         for i in range(amosaParams.i_archivesize):
             fp.write('\n')
-            if(amosaParams.dd_func_archive[i][0]<2.5 and amosaParams.dd_func_archive[i][1]<2.5 and amosaParams.dd_func_archive[i][2]<2.5 ):#debug
-                for h in range(amosaParams.i_no_offunc):
-                    fp.write("\t" + str(amosaParams.dd_func_archive[i][h]))
-                    if h == 0:
-                        obj1.append(amosaParams.dd_func_archive[i][h])
-                    elif h == 1:
-                        obj2.append(amosaParams.dd_func_archive[i][h])
-                    elif h == 2:
-                        obj3.append(amosaParams.dd_func_archive[i][h])
+            #if(amosaParams.dd_func_archive[i][0]<2.5 and amosaParams.dd_func_archive[i][1]<2.5 and amosaParams.dd_func_archive[i][2]<2.5 ):#debug
+            for h in range(amosaParams.i_no_offunc):
+                fp.write("\t" + str(amosaParams.dd_func_archive[i][h]))
+                if h == 0:
+                    obj1.append(amosaParams.dd_func_archive[i][h])
+                elif h == 1:
+                    obj2.append(amosaParams.dd_func_archive[i][h])
+                elif h == 2:
+                    obj3.append(amosaParams.dd_func_archive[i][h])
 
     with open('decision_values.txt', 'w+') as fp:
         for i in range(amosaParams.i_archivesize):

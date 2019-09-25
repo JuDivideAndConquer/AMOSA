@@ -64,8 +64,8 @@ def evaluate(input, c_problem, i_no_offunc):
     elif(c_problem == 'ZDT4'):
         d_eval = ZDT4(input)
         return d_eval
-    elif(c_problem == 'ZDT5'):
-        d_eval = ZDT5(input)
+    # elif(c_problem == 'ZDT5'):
+    #     d_eval = ZDT5(input)
         return d_eval
     elif(c_problem == 'ZDT6'):
         d_eval = ZDT6(input)
