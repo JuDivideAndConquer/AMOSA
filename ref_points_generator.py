@@ -11,8 +11,6 @@ class form_ref_points(object):
         self.allPoints = []
         self.points = []
         self.form()
-        print(self.points)
-        print(len(self.points))
 
     def recursivePointsGenerate(self, layer, point):
         '''Generates the points recursively. Every permutation of values in layer is generated'''
@@ -39,9 +37,54 @@ class form_ref_points(object):
             if(s == 1):
                 self.points.append(self.allPoints[i])
 
+# for higher objectives, partitioning using inner and outer divisions
+
+
+def form_refs(n_obj, outerDivisions, innerDivisions):
+    points = []
+
+    outerPoints = form_ref_points(n_obj, outerDivisions).points
+    innerPoints = form_ref_points(n_obj, innerDivisions).points
+
+    for i in range(len(innerPoints)):
+        for j in range(n_obj):
+            innerPoints[i][j] = (innerPoints[i][j]/2) + (1.0/(2.0*n_obj))
+
+    for i in range(len(outerPoints)):
+        points.append(outerPoints[i])
+    for i in range(len(innerPoints)):
+        points.append(innerPoints[i])
+
+    return points
+
 
 # Entry point ----------------------------------
-def getRefPoints(n_obj, divisions):
+def getRefPoints(n_obj):
     '''returns generated reference points'''
-    refPoints = form_ref_points(n_obj, divisions)
-    return refPoints.points
+    if(n_obj == 3):
+        divisions = 12
+        refPoints = form_ref_points(n_obj, divisions)
+        return refPoints.points
+    elif(n_obj == 5):
+        divisions = 6
+        refPoints = form_ref_points(n_obj, divisions)
+        return refPoints.points
+    elif(n_obj == 8):
+        outerDivisions = 3
+        innerDivisions = 2
+        ref_points = form_refs(8, outerDivisions, innerDivisions)
+        return ref_points
+    elif(n_obj == 10):
+        outerDivisions = 3
+        innerDivisions = 2
+        ref_points = form_refs(8, outerDivisions, innerDivisions)
+        return ref_points
+    elif(n_obj == 15):
+        outerDivisions = 2
+        innerDivisions = 1
+        ref_points = form_refs(8, outerDivisions, innerDivisions)
+        return ref_points
+
+points = getRefPoints(8)
+for point in points:
+    print(point)
