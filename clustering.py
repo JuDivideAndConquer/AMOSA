@@ -89,8 +89,9 @@ def associate(dd_func_archive, refPoints, associationList):
         for j in range(len(refPoints)):
             nDistance = calculatePBI(dd_func_archive[i], refPoints[j])
             if(nDistance < minDistance):
+                minDistance = nDistance
                 minDistanceIndex = j
-        associationList[minDistanceIndex].append(i)
+        associationList[minDistanceIndex].append([i,minDistance])
 
 
 def clustering(amosaParams):
@@ -105,8 +106,9 @@ def clustering(amosaParams):
     # Getting the reference points (later to be genenrated only once)
     refPoints = getRefPoints(amosaParams.i_no_offunc)
 
-    # Associate each point to a reference point
+    # association list[refPoint] contains list of [pointIndex, minDistance]
     associationList = [[]] * len(refPoints)
+    # Associate each point to a reference point
     associate(dd_func_archive, refPoints, associationList)
 
     # De-normalization
