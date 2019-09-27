@@ -47,8 +47,34 @@ def deNormalize(dd_archive, d_normalize_shift, d_normalize_scale, amosaParams):
         for j in range(len(dd_archive)):
             dd_archive[j][i] = dd_archive[j][i] + d_normalize_shift[i]
 
-def calculateDistance(point,refPoint):
-    pass #working here
+def calculatePBI(point,refPoint):
+    ''' Function to calculate distance (cost function) form the associated ref point'''
+    # Assuming that the ideal point is origin for all funcions
+
+    #calculate d1
+    refPointMod = 0.0
+    for x in refPoint:
+        refPointMod = refPointMod + x*x
+    refPointMod = math.sqrt(refPointMod)
+    
+    d1 = 0.0
+    for i in range(len(point)):
+        d1 = d1 + point[i]*refPoint[i]
+    d1 = d1 / refPointMod
+
+    #calculate d2
+    pointOnRef = copy.deepcopy(refPoint)
+    for i in range(len(pointOnRef)):
+        pointOnRef = pointOnRef*d1/refPointMod
+    
+    d2Vector = []
+    for i in range(len(point)):
+        d2Vector.append(point[i]-pointOnRef[i])
+        
+
+
+
+
 
 def associate(dd_func_archive,refPoints,associationList):
     '''function to associate each point to a reference point'''
@@ -56,7 +82,7 @@ def associate(dd_func_archive,refPoints,associationList):
         minDistance = math.inf
         minDistanceIndex = 0
         for j in range(len(refPoints)):
-            nDistance = calculateDistance(dd_func_archive[i],refPoints[j])
+            nDistance = calculatePBI(dd_func_archive[i],refPoints[j])
             if(nDistance<minDistance):
                 minDistanceIndex = j
         associationList[minDistanceIndex].append(i)
