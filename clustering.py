@@ -47,45 +47,51 @@ def deNormalize(dd_archive, d_normalize_shift, d_normalize_scale, amosaParams):
         for j in range(len(dd_archive)):
             dd_archive[j][i] = dd_archive[j][i] + d_normalize_shift[i]
 
-def calculatePBI(point,refPoint):
+
+def calculatePBI(point, refPoint):
     ''' Function to calculate distance (cost function) form the associated ref point'''
     # Assuming that the ideal point is origin for all funcions
+    theta = 0.5
 
-    #calculate d1
+    # calculate d1
     refPointMod = 0.0
     for x in refPoint:
         refPointMod = refPointMod + x*x
     refPointMod = math.sqrt(refPointMod)
-    
+
     d1 = 0.0
     for i in range(len(point)):
         d1 = d1 + point[i]*refPoint[i]
     d1 = d1 / refPointMod
 
-    #calculate d2
+    # calculate d2
     pointOnRef = copy.deepcopy(refPoint)
     for i in range(len(pointOnRef)):
         pointOnRef = pointOnRef*d1/refPointMod
-    
+
     d2Vector = []
+    d2 = 0
     for i in range(len(point)):
         d2Vector.append(point[i]-pointOnRef[i])
-        
+        d2 = d2 + (point[i]-pointOnRef[i])**2
+    d2 = math.sqrt(d2)
+
+    return d1 + theta*d2
 
 
 
 
-
-def associate(dd_func_archive,refPoints,associationList):
+def associate(dd_func_archive, refPoints, associationList):
     '''function to associate each point to a reference point'''
     for i in range(len(dd_func_archive)):
         minDistance = math.inf
         minDistanceIndex = 0
         for j in range(len(refPoints)):
-            nDistance = calculatePBI(dd_func_archive[i],refPoints[j])
-            if(nDistance<minDistance):
+            nDistance = calculatePBI(dd_func_archive[i], refPoints[j])
+            if(nDistance < minDistance):
                 minDistanceIndex = j
         associationList[minDistanceIndex].append(i)
+
 
 def clustering(amosaParams):
 
@@ -101,7 +107,7 @@ def clustering(amosaParams):
 
     # Associate each point to a reference point
     associationList = [[]] * len(refPoints)
-    associate(dd_func_archive,refPoints,associationList)
+    associate(dd_func_archive, refPoints, associationList)
 
     # De-normalization
     deNormalize(dd_func_archive, d_normalize_shift,
