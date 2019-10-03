@@ -54,7 +54,7 @@ def deNormalize(dd_func_archive, d_normalize_shift, d_normalize_scale, amosaPara
 def calculatePBI(point, refPoint):
     ''' Function to calculate distance (cost function) form the associated ref point'''
     # Assuming that the ideal point is origin for all funcions
-    theta = 0.5
+    theta = 5
 
     # calculate d1
     refPointMod = 0.0
@@ -79,7 +79,6 @@ def calculatePBI(point, refPoint):
         d2 = d2 + (point[i]-pointOnRef[i])**2
     d2 = math.sqrt(d2)
 
-    exit(0)  # debug
     return d1 + theta*d2
 
 
@@ -87,17 +86,72 @@ def associate(dd_func_archive, refPoints, associationList):
     '''function to associate each point to a reference point'''
     for i in range(len(dd_func_archive)):
         minDistance = math.inf
-        minDistanceIndex = 0
+        minDistanceIndex = -1
         for j in range(len(refPoints)):
             nDistance = calculatePBI(dd_func_archive[i], refPoints[j])
+            # print("refpoint ", j, " , point ", i,
+            #       " , distance :", nDistance)  # debug
             if(nDistance < minDistance):
                 minDistance = nDistance
                 minDistanceIndex = j
         associationList[minDistanceIndex].append([i, minDistance])
+        # print("point ", i, " associated to ref point ", minDistanceIndex)
+
+
+def niching(dd_func_archive, dd_archive, associationList, i_hardl):
+    '''function to select points form the archive based on their distance and reference point associated to'''
+
+    clustered_dd_func_archive = []
+    clustered_dd_archive = []
+
+    while(len(clustered_dd_func_archive) < i_hardl):
+        # variable to hold the index of reference points which are non-empty and a point is yet to be selected form them
+        refPointSelectedList = []
+        for i in range(len(associationList)):
+            if(len(associationList[i]) != 0):
+                refPointSelectedList.append(i)
+
+        while(len(refPointSelectedList) != 0):
+            # find the ref point with least no of point associations
+            minAssociationIndex = -1
+            minAssociation = math.inf
+            for i in range(len(refPointSelectedList)):
+                if(minAssociation > len(associationList[refPointSelectedList[i]])):
+                    minAssociation = len(
+                        associationList[refPointSelectedList[i]])
+                    minAssociationIndex = refPointSelectedList[i]
+
+            # find the point with the least distance form that reference point
+            minDistanceIndex = -1
+            minDistance = math.inf
+            for i in range(len(associationList[minAssociationIndex])):
+                if(minDistance > associationList[minAssociationIndex][i][1]):
+                    minDistanceIndex = i
+                    minDistance = associationList[minAssociationIndex][i][1]
+
+            pointIndex = associationList[minAssociationIndex][minDistanceIndex][0]
+            # print("pointIndex :",pointIndex)#debug
+
+            # add the point to the archives
+            clustered_dd_func_archive.append(
+                dd_func_archive[pointIndex])
+            clustered_dd_archive.append(dd_archive[pointIndex])
+
+            #check the length of the new archive
+            if(len(clustered_dd_archive)>= i_hardl):
+                return clustered_dd_archive, clustered_dd_func_archive
+
+            # remove the point form the association list
+            associationList[minAssociationIndex].pop(minDistanceIndex)
+
+            # remove the ref point from the list
+            refPointSelectedList.remove(minAssociationIndex)
+
+    return clustered_dd_archive, clustered_dd_func_archive
 
 
 def clustering(amosaParams):
-    print("clustering called")
+    # print("clustering called")
     dd_archive = copy.deepcopy(amosaParams.dd_archive)
     dd_func_archive = copy.deepcopy(amosaParams.dd_func_archive)
 
@@ -109,10 +163,32 @@ def clustering(amosaParams):
     refPoints = getRefPoints(amosaParams.i_no_offunc)
 
     # association list[refPoint] contains list of [pointIndex, minDistance]
-    associationList = [[]] * len(refPoints)
+    associationList = []
+    for i in range(len(refPoints)):
+        associationList.append([])
     # Associate each point to a reference point
     associate(dd_func_archive, refPoints, associationList)
+
+    # debug
+    # print("association list---------------------")
+    # for i in range(len(associationList)):
+    #     if(len(associationList[i]) != 0):
+    #         print("association list ", i, "----------")
+    #         for x in associationList[i]:
+    #             print(x[0], end=" ")
+    #         print()
+
+    # perform niching
+    clustered_dd_archive, clustered_dd_func_archive = niching(
+        dd_func_archive, dd_archive, associationList, amosaParams.i_hardl)
 
     # De-normalization
     deNormalize(dd_func_archive, d_normalize_shift,
                 d_normalize_scale, amosaParams)
+
+    #updating the real archive
+    amosaParams.dd_archive = clustered_dd_archive
+    amosaParams.dd_func_archive = clustered_dd_func_archive
+    amosaParams.i_archivesize = len(clustered_dd_archive)
+
+    #exit(0)#debug

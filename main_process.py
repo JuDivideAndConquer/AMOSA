@@ -271,6 +271,7 @@ def runAMOSA(amosaParams):
             fp.write('\n')
             for h in range(amosaParams.i_no_offunc):
                 fp.write("\t" + str(amosaParams.dd_func_archive[i][h]))
+                #if(amosaParams.dd_func_archive[i][0]<=1 and amosaParams.dd_func_archive[i][1]<=1 and amosaParams.dd_func_archive[i][2]<=1):#debug(filtered graph)
                 if h == 0:
                     obj1.append(amosaParams.dd_func_archive[i][h])
                 elif h == 1:

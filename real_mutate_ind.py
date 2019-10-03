@@ -8,6 +8,7 @@ def real_mutate_ind(s, amosaParam):
     i_rand = random.randint(0, amosaParam.i_totalno_var - 1)
     y = s[i_rand]
     y = mutate(y, amosaParam, i_rand)
+    #y = random.random()*(amosaParam.d_max_real_var[i_rand]-amosaParam.d_min_real_var[i_rand]) + amosaParam.d_min_real_var[i_rand]
     i_count = 0
     while((y < amosaParam.d_min_real_var[i_rand] or y > amosaParam.d_max_real_var[i_rand]) and i_count < amosaParam.i_hillclimb_no):
         y = s[i_rand]
