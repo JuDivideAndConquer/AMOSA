@@ -9,43 +9,46 @@ import math
 # 4. Keep the lowest cost points
 
 
-def normalize(dd_archive, amosaParams):
+def normalize(dd_func_archive, amosaParams):
     '''Normalization of archive vectors'''
 
     d_normalize_shift = [0]*amosaParams.i_no_offunc
     d_normalize_scale = [0]*amosaParams.i_no_offunc
 
     for i in range(amosaParams.i_no_offunc):
-        min = -math.inf
-        max = math.inf
-        for j in range(len(dd_archive)):
-            if(min > dd_archive[j][i]):
-                min = dd_archive[j][i]
-            if(max < dd_archive[j][i]):
-                max = dd_archive[j][i]
+        min = math.inf
+        max = -math.inf
+        for j in range(len(dd_func_archive)):
+            if(min > dd_func_archive[j][i]):
+                min = dd_func_archive[j][i]
+            if(max < dd_func_archive[j][i]):
+                max = dd_func_archive[j][i]
         d_normalize_scale[i] = max - min
         d_normalize_shift[i] = min
 
     for i in range(amosaParams.i_no_offunc):
         # Normalize shift
-        for j in range(len(dd_archive)):
-            dd_archive[j][i] = dd_archive[j][i] - d_normalize_shift[i]
+        for j in range(len(dd_func_archive)):
+            dd_func_archive[j][i] = dd_func_archive[j][i] - \
+                d_normalize_shift[i]
         # Normalize scale
-        for j in range(len(dd_archive)):
-            dd_archive[j][i] = dd_archive[j][i]/d_normalize_scale[i]
+        for j in range(len(dd_func_archive)):
+            dd_func_archive[j][i] = dd_func_archive[j][i]/d_normalize_scale[i]
 
     return d_normalize_shift, d_normalize_scale
 
 
-def deNormalize(dd_archive, d_normalize_shift, d_normalize_scale, amosaParams):
+def deNormalize(dd_func_archive, d_normalize_shift, d_normalize_scale, amosaParams):
     '''De-normalization of vectors'''
     for i in range(amosaParams.i_no_offunc):
         # de-normalize scale
-        for j in range(len(dd_archive)):
-            dd_archive[j][i] = dd_archive[j][i] * d_normalize_scale[i]
+        for j in range(len(dd_func_archive)):
+            dd_func_archive[j][i] = dd_func_archive[j][i] * \
+                d_normalize_scale[i]
         # de-normalize shift
-        for j in range(len(dd_archive)):
-            dd_archive[j][i] = dd_archive[j][i] + d_normalize_shift[i]
+        for j in range(len(dd_func_archive)):
+            dd_func_archive[j][i] = dd_func_archive[j][i] + \
+                d_normalize_shift[i]
 
 
 def calculatePBI(point, refPoint):
@@ -67,7 +70,7 @@ def calculatePBI(point, refPoint):
     # calculate d2
     pointOnRef = copy.deepcopy(refPoint)
     for i in range(len(pointOnRef)):
-        pointOnRef = pointOnRef*d1/refPointMod
+        pointOnRef[i] = pointOnRef[i]*d1/refPointMod
 
     d2Vector = []
     d2 = 0
@@ -76,9 +79,8 @@ def calculatePBI(point, refPoint):
         d2 = d2 + (point[i]-pointOnRef[i])**2
     d2 = math.sqrt(d2)
 
+    exit(0)  # debug
     return d1 + theta*d2
-
-
 
 
 def associate(dd_func_archive, refPoints, associationList):
@@ -91,11 +93,11 @@ def associate(dd_func_archive, refPoints, associationList):
             if(nDistance < minDistance):
                 minDistance = nDistance
                 minDistanceIndex = j
-        associationList[minDistanceIndex].append([i,minDistance])
+        associationList[minDistanceIndex].append([i, minDistance])
 
 
 def clustering(amosaParams):
-
+    print("clustering called")
     dd_archive = copy.deepcopy(amosaParams.dd_archive)
     dd_func_archive = copy.deepcopy(amosaParams.dd_func_archive)
 

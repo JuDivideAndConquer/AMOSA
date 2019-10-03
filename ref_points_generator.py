@@ -84,7 +84,3 @@ def getRefPoints(n_obj):
         innerDivisions = 1
         ref_points = form_refs(8, outerDivisions, innerDivisions)
         return ref_points
-
-points = getRefPoints(8)
-for point in points:
-    print(point)
