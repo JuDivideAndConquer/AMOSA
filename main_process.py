@@ -43,6 +43,7 @@ def runAMOSA(amosaParams):
     tt=0
 
     def consoleprint(case,i):
+        print(  "__________________________________________________________________________________________________________________________________________________________", end='\r')
         print(  'iteration: ' + str(i) +'\t\t'+ 'case ' + str(case) + '\t'+ 'archivesize: ' + str(amosaParams.i_archivesize) + '\t\t\t'+ str(tt) + 'th temp \t Temperature: ' + str(t), end='\r')
 
     while(t >= amosaParams.d_tmin):
@@ -266,11 +267,12 @@ def runAMOSA(amosaParams):
         t = round(t * amosaParams.d_alpha, 6)
         tt=tt+1
 
-    if(amosaParams.i_no_offunc == 3):
-        real_time_plot(real_time_graph_data)
+    print()
+    # if(amosaParams.i_no_offunc == 3):
+    #     real_time_plot(real_time_graph_data)
 
-    if(amosaParams.i_no_offunc == 2):
-        real_time_plot(real_time_graph_data)
+    # if(amosaParams.i_no_offunc == 2):
+    #     real_time_plot(real_time_graph_data)
 
     # with open('saplot.out','w+') as fp:
     obj1 = []
@@ -279,16 +281,16 @@ def runAMOSA(amosaParams):
     with open('objective_values.txt', 'w+') as fp:
 
         for i in range(amosaParams.i_archivesize):
-            fp.write('\n')
             #if(amosaParams.dd_func_archive[i][0]<2.5 and amosaParams.dd_func_archive[i][1]<2.5 and amosaParams.dd_func_archive[i][2]<2.5 ):#debug
             for h in range(amosaParams.i_no_offunc):
-                fp.write("\t" + str(amosaParams.dd_func_archive[i][h]))
+                fp.write(str(amosaParams.dd_func_archive[i][h]) + ' ')
                 if h == 0:
                     obj1.append(amosaParams.dd_func_archive[i][h])
                 elif h == 1:
                     obj2.append(amosaParams.dd_func_archive[i][h])
                 elif h == 2:
                     obj3.append(amosaParams.dd_func_archive[i][h])
+            fp.write('\n')
 
     with open('decision_values.txt', 'w+') as fp:
         for i in range(amosaParams.i_archivesize):
@@ -296,11 +298,11 @@ def runAMOSA(amosaParams):
             for h in range(amosaParams.i_totalno_var):
                 fp.write("\t" + str(amosaParams.dd_archive[i][h]))
 
-    if amosaParams.i_no_offunc == 2:
-        plt.plot(obj1, obj2, 'ro')
-        plt.show()
-    elif amosaParams.i_no_offunc == 3:
-        fig = plt.figure()
-        ax = plt.axes(projection='3d')
-        ax.scatter3D(obj1, obj2, obj3)
-        plt.show()
+    # if amosaParams.i_no_offunc == 2:
+    #     plt.plot(obj1, obj2, 'ro')
+    #     plt.show()
+    # elif amosaParams.i_no_offunc == 3:
+    #     fig = plt.figure()
+    #     ax = plt.axes(projection='3d')
+    #     ax.scatter3D(obj1, obj2, obj3)
+    #     plt.show()

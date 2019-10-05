@@ -2,7 +2,7 @@ import math
 import copy
 
 
-def clustering(amosaParams):
+def clustering1(amosaParams):
     no_clus = amosaParams.i_archivesize
     cluster = []  # size softl+1
     dd_archive2 = []  # size (softl+2)*(softl+2)
@@ -211,3 +211,11 @@ def clustering(amosaParams):
     amosaParams.i_archivesize = k
     amosaParams.dd_archive = amosaParams.dd_archive[:k]
     amosaParams.dd_func_archive = amosaParams.dd_func_archive[:k]
+
+
+def clustering2(amosaParams):
+    pass
+
+
+def clustering(amosaParams):
+    clustering1(amosaParams)

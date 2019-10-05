@@ -15,7 +15,9 @@ def init_functions(func):
         obj = 2
         var = 1
     elif(func in ['DTLZ1', 'DTLZ2', 'DTLZ3', 'DTLZ4']):
-        obj = int(input("Enter the number of objective function: "))
+        #obj = int(input("Enter the number of objective function: "))
+        print("Number of objective functions: 3")#debug
+        obj = 3
         k = int()
         if(func == 'DTLZ1'):
             k = 5

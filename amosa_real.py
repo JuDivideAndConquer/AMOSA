@@ -10,7 +10,8 @@ import math
 
 
 def readParameters(amosaParams):
-    func = input('Enter the test function name: ')
+    func = "DTLZ1"
+    print('Test function name: ',func)
     if(not (func in VALID_FUNC)):
         print('Invaid function name. Exiting')
         exit()
@@ -22,18 +23,17 @@ def readParameters(amosaParams):
     amosaParams.i_no_offunc, amosaParams.i_totalno_var = init_functions(func)
 
     # Setting hard and soft limits on archive size
-    amosaParams.i_hardl = int(input('Enter the hard-limit: '))
-    amosaParams.i_softl = int(input('Enter the soft-limit: '))
-    if(amosaParams.i_softl < amosaParams.i_hardl):
-        print('Invalid soft and hard limits. Exiting')
-        exit()
+    amosaParams.i_hardl = 100
+    print('Hard-limit: ',amosaParams.i_hardl)
+    amosaParams.i_softl = 120
+    print('Soft-limit: ',amosaParams.i_softl)
 
     # Setting the number of iterations per temperature
     amosaParams.i_no_ofiter = 500
 
     # Setting temperature limits
-    amosaParams.d_tmin = 0.000025
-    amosaParams.d_tmax = 100
+    amosaParams.d_tmin = float(0.00001)
+    amosaParams.d_tmax = 200
 
     # Function range according to input variables
 
@@ -41,12 +41,11 @@ def readParameters(amosaParams):
     amosaParams.i_hillclimb_no = 20
 
     # Setting the cooling rate
-    amosaParams.d_alpha = float(input('Enter the cooling rate: '))
-    if(amosaParams.d_alpha >= 1 or amosaParams.d_alpha < 0):
-        print('Invalid cooling rate (0 < Cooling rate < 1). Exiting')
-        exit()
+    amosaParams.d_alpha = float(0.9)
+    print('cooling rate: ',amosaParams.d_alpha)
 
     # Setting the range of values of variables
+    '''
     for i in range(amosaParams.i_totalno_var):
         amosaParams.d_min_real_var.append(
             float(input('Enter the minimim value of real-variable '+str(i)+': ')))
@@ -56,7 +55,6 @@ def readParameters(amosaParams):
     for i in range(amosaParams.i_totalno_var):
         amosaParams.d_min_real_var.append(0.0)
         amosaParams.d_max_real_var.append(1.0)
-    '''
 
     print(amosaParams.d_min_real_var)
     print(amosaParams.d_max_real_var)
