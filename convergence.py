@@ -2,6 +2,7 @@
 
 import numpy as np
 from numpy import linalg as LA
+import sys
 
 
 def conv(ref_points, archive):
@@ -18,9 +19,8 @@ def conv(ref_points, archive):
 
 
 # main function---------------------------------------------
-
 ref_points = []
-with open("./true_pareto_fronts/DTLZ1(3).csv", "r") as fp:
+with open(sys.argv[1], "r") as fp:
     lines = fp.readlines()
     for line in lines:
         point = line.split(" ")[:-1]

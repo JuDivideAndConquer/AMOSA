@@ -1,5 +1,6 @@
 import math
 import copy
+import sys
 
 #single linkage clustering---------------------------------------------------------------------------------------------------------------
 def clustering1(amosaParams):
@@ -417,4 +418,7 @@ def clustering2(amosaParams):
 
 
 def clustering(amosaParams):
-    clustering1(amosaParams)
+    if(amosaParams.i_clustering_type == "0"):
+        clustering1(amosaParams)
+    else:
+        clustering2(amosaParams)

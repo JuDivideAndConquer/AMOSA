@@ -21,3 +21,4 @@ class AMOSAType:
     d_func_range = []		# Range of the functions
     d_min_real_var = []		# Stores minimum value of the real variables
     d_max_real_var = []		# Stores maximum value of the real variables
+    i_clustering_type = int()

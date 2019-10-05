@@ -11,11 +11,16 @@ import sys
 
 
 def readParameters(amosaParams):
-    func = "DTLZ1"
+    func = sys.argv[1]
     print('Test function name: ',func)
     if(not (func in VALID_FUNC)):
         print('Invaid function name. Exiting')
         exit()
+
+    if(sys.argv[2]!='0' and sys.argv[2]!='1'):
+        print("Invalid clustering type!")
+        exit()
+    amosaParams.i_clustering_type = sys.argv[2]
 
     # Setting the problem function
     amosaParams.c_problem = str(func)
@@ -80,7 +85,6 @@ def readParameters(amosaParams):
         amosaParams.d_func_range.append(d_max-d_idea_point)
 
 '''Main function (Execution starting point)'''
-print (sys.argv)
 amosaParams = AMOSAType()
 readParameters(amosaParams)
 
