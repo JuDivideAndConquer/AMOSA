@@ -7,6 +7,7 @@ from init_sol import initialize_sol
 from creating_archive import creating_archive
 from main_process import runAMOSA
 import math
+import sys
 
 
 def readParameters(amosaParams):
@@ -79,6 +80,7 @@ def readParameters(amosaParams):
         amosaParams.d_func_range.append(d_max-d_idea_point)
 
 '''Main function (Execution starting point)'''
+print (sys.argv)
 amosaParams = AMOSAType()
 readParameters(amosaParams)
 
