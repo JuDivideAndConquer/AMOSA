@@ -413,12 +413,13 @@ def clustering2(amosaParams):
     amosaParams.i_archivesize = len(clustered_dd_archive)
 
     #exit(0)#debug
-def clustering2(amosaParams):
-    pass
 
 
 def clustering(amosaParams):
     if(amosaParams.i_clustering_type == "0"):
         clustering1(amosaParams)
-    else:
+    elif(amosaParams.i_clustering_type == "1"):
         clustering2(amosaParams)
+    else:
+        print("Invalid clustering type")
+        exit(0)
