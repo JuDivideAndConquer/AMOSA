@@ -4,15 +4,24 @@
 # 4th arguement : file name of the true pareto front points
 # example : $ ./experiment.sh DTLZ1 0 true_pareto_fronts/DTLZ1\(3\).csv 
 
-convFilename="Ref_AMOSA_conv.csv"
-rHVFilename="Ref_AMOSA_rHV.csv"
+if [ -e results ]; then
+    if [ ! -e results/plots ]; then
+        mkdir results/plots
+    fi
+else
+    mkdir results
+    mkdir results/plots
+fi
+
+convFilename="results/Ref_AMOSA_conv.csv"
+rHVFilename="results/Ref_AMOSA_rHV.csv"
 
 if [ $2 -eq 0 ]; then
-    convFilename="AMOSA_conv.csv"
-    rHVFilename="AMOSA_rHV.csv"
+    convFilename="results/AMOSA_conv.csv"
+    rHVFilename="results/AMOSA_rHV.csv"
 elif [ $2 -eq 1 ]; then
-    convFilename="Ref_AMOSA_conv.csv"
-    rHVFilename="Ref_AMOSA_rHV.csv"
+    convFilename="results/Ref_AMOSA_conv.csv"
+    rHVFilename="results/Ref_AMOSA_rHV.csv"
 fi
 
 if [ -f $convFilename ]; then
@@ -20,11 +29,15 @@ if [ -f $convFilename ]; then
 fi
 
 if [ $2 -eq 0 ]; then
-    rm -r ./plots/AMOSA_plots
-    mkdir ./plots/AMOSA_plots
+    if [ -f ./results/plots/AMOSA_plots ]; then
+        rm -r ./results/plots/AMOSA_plots
+    fi
+        mkdir ./results/plots/AMOSA_plots
 elif [ $2 -eq 1 ]; then
-    rm -r ./plots/Ref_AMOSA_plots
-    mkdir ./plots/Ref_AMOSA_plots
+    if [ -f ./results/plots/Ref_AMOSA_plots ]; then
+        rm -r ./results/plots/Ref_AMOSA_plots
+    fi
+        mkdir ./results/plots/Ref_AMOSA_plots
 fi
 
 if [ -f $rHVFilename ]; then
@@ -38,9 +51,9 @@ for i in {1..30}; do
 
     if [ $3 -eq 3 ]; then
         if [ $2 -eq 0 ]; then
-            cp objective_values.txt ./plots/AMOSA_plots/$1"_"$i.csv
+            cp objective_values.txt ./results/plots/AMOSA_plots/$1"_"$i.csv
         elif [ $2 -eq 1 ]; then
-            cp objective_values.txt ./plots/Ref_AMOSA_plots/$1"_"$i.csv
+            cp objective_values.txt ./results/plots/Ref_AMOSA_plots/$1"_"$i.csv
         fi
     fi
     
