@@ -149,7 +149,7 @@ def clustering(amosaParams):
         dd_func_archive, amosaParams)
 
     # Getting the reference points (later to be genenrated only once)
-    refPoints = getRefPoints(amosaParams.i_no_offunc)
+    refPoints = amosaParams.refPoints
 
     # association list[refPoint] contains list of [func_point,point]
     associationList = []

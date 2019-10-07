@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 from real_time_plot import real_time_plot
 import math
+from ref_points_generator import getRefPoints
 
 def runAMOSA(amosaParams):
     r = int()
@@ -41,6 +42,9 @@ def runAMOSA(amosaParams):
 
     t = amosaParams.d_tmax
     tt=0
+
+    # Getting the reference points (later to be genenrated only once)
+    amosaParams.refPoints = getRefPoints(amosaParams.i_no_offunc)
 
     def consoleprint(case,i):
         print(  'iteration: ' + str(i) +'\t\t'+ 'case ' + str(case) + '\t'+ 'archivesize: ' + str(amosaParams.i_archivesize) + '\t\t\t'+ str(tt) + 'th temp \t Temperature: ' + str(t), end='\r')
