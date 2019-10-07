@@ -1,6 +1,9 @@
+#!/usr/bin/env python3
+
 import random
 import copy
 import numpy as np
+import sys
 
 
 def check_dom_pts(x1, x2):
@@ -63,3 +66,14 @@ with open("./objective_values.txt", "r") as fp:
         archive.append(point)
 archive = np.asfarray(archive)
 #print(archive)
+
+ref_points = []
+func = sys.argv[1]
+if(func == "DTLZ1"):
+    ref_points = [0.6]*len(archive[0])
+elif(func == "DTLZ2" or func == "DTLZ3" or func == "DTLZ4" ):
+    ref_points = [1.2]*len(archive[0])
+ref_points = np.asfarray(ref_points)
+#print(ref_points)
+
+print(approximate_hypervolume(archive,ref_points,10000))
