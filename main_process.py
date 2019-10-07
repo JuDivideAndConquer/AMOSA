@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 from real_time_plot import real_time_plot
 import math
+import sys
 
 def runAMOSA(amosaParams):
     r = int()

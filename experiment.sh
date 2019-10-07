@@ -1,6 +1,7 @@
-# first arguement : name of the test function (in caps)
-# second arguement : 0 or 1 (0 for AMOSA, 1 for Ref_AMOSA)
-# third arguement : file name of the true pareto front points
+# 1st arguement : name of the test function (in caps)
+# 2nd arguement : 0 or 1 (0 for AMOSA, 1 for Ref_AMOSA)
+# 3rd arguement : no of objectives
+# 4th arguement : file name of the true pareto front points
 # example : $ ./experiment.sh DTLZ1 0 true_pareto_fronts/DTLZ1\(3\).csv 
 
 convFilename="Ref_AMOSA_conv.csv"
@@ -18,6 +19,8 @@ if [ -f $convFilename ]; then
     rm $convFilename
 fi
 
+rm ./plots/*
+
 if [ -f $rHVFilename ]; then
     rm $rHVFilename
 fi
@@ -25,9 +28,11 @@ fi
 for i in {1..3}; do
     echo -e "\niteration $i |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
     
-    ./amosa_real.py "$1" "$2"
+    ./amosa_real.py "$1" "$2" "$3"
+
+    cp objective_values.txt ./plots/$1"_"$i.csv
     
-    conv=$(./convergence.py "$3")
+    conv=$(./convergence.py "$4")
     echo "convergence : $conv"
     echo -e "$conv" >>$convFilename
 

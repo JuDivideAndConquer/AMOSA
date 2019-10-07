@@ -8,6 +8,7 @@ from creating_archive import creating_archive
 from main_process import runAMOSA
 import math
 import sys
+from ref_points_generator import getRefPoints
 
 
 def readParameters(amosaParams):
@@ -27,6 +28,9 @@ def readParameters(amosaParams):
 
     # Setting the number of objective functions
     amosaParams.i_no_offunc, amosaParams.i_totalno_var = init_functions(func)
+
+    # Generating reference points for subspace clustering
+    amosaParams.refPoints = getRefPoints(amosaParams.i_no_offunc)
 
     # Setting hard and soft limits on archive size
     amosaParams.i_hardl = 100
