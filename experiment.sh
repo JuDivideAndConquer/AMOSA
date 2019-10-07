@@ -25,7 +25,7 @@ if [ -f $rHVFilename ]; then
     rm $rHVFilename
 fi
 
-for i in {1..3}; do
+for i in {1..30}; do
     echo -e "\niteration $i |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
     
     ./amosa_real.py "$1" "$2" "$3"
