@@ -86,7 +86,7 @@ def calculatePBI(point, refPoint):
     return d1 + theta*d2
 
 
-def associate(dd_func_archive, refPoints, associationList):
+def associate(dd_func_archive,dd_archive, refPoints, associationList):
     '''function to associate each point to a reference point'''
     for i in range(len(dd_func_archive)):
         minDistance = math.inf
@@ -99,7 +99,7 @@ def associate(dd_func_archive, refPoints, associationList):
             if(nDistance < minDistance):
                 minDistance = nDistance
                 minDistanceIndex = j
-        associationList[minDistanceIndex].append([i, minDistance])
+        associationList[minDistanceIndex].append([dd_func_archive[i],dd_archive[i]])
         # print("point ", i, " associated to ref point ", minDistanceIndex)
 
 
@@ -167,12 +167,12 @@ def clustering(amosaParams):
     # Getting the reference points (later to be genenrated only once)
     refPoints = getRefPoints(amosaParams.i_no_offunc)
 
-    # association list[refPoint] contains list of [pointIndex, minDistance]
+    # association list[refPoint] contains list of [func_point,point]
     associationList = []
     for i in range(len(refPoints)):
         associationList.append([])
     # Associate each point to a reference point
-    associate(dd_func_archive, refPoints, associationList)
+    associate(dd_func_archive, dd_archive, refPoints, associationList)
 
     # debug
     # print("association list---------------------")
@@ -188,7 +188,7 @@ def clustering(amosaParams):
         dd_func_archive, dd_archive, associationList, amosaParams.i_hardl)
 
     # De-normalization
-    deNormalize(dd_func_archive, d_normalize_shift,
+    deNormalize(clustered_dd_func_archive, d_normalize_shift,
                 d_normalize_scale, amosaParams)
 
     #updating the real archive
@@ -196,4 +196,4 @@ def clustering(amosaParams):
     amosaParams.dd_func_archive = clustered_dd_func_archive
     amosaParams.i_archivesize = len(clustered_dd_archive)
 
-    #exit(0)#debug
+    exit(0)#debug
