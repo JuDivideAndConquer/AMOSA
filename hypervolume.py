@@ -75,5 +75,6 @@ elif(func == "DTLZ2" or func == "DTLZ3" or func == "DTLZ4" ):
     ref_points = [1.2]*len(archive[0])
 ref_points = np.asfarray(ref_points)
 #print(ref_points)
-
-print(approximate_hypervolume(archive,ref_points,10000))
+hv = approximate_hypervolume(archive,ref_points,10000)
+hv = 1/hv
+print(hv)
