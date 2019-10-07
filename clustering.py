@@ -302,7 +302,7 @@ def calculatePBI(point, refPoint):
     return d1 + theta*d2
 
 
-def associate(dd_func_archive, refPoints, associationList):
+def associate(dd_func_archive,dd_archive, refPoints, associationList):
     '''function to associate each point to a reference point'''
     for i in range(len(dd_func_archive)):
         minDistance = math.inf
@@ -315,58 +315,42 @@ def associate(dd_func_archive, refPoints, associationList):
             if(nDistance < minDistance):
                 minDistance = nDistance
                 minDistanceIndex = j
-        associationList[minDistanceIndex].append([i, minDistance])
+        associationList[minDistanceIndex].append([dd_func_archive[i],dd_archive[i]])
         # print("point ", i, " associated to ref point ", minDistanceIndex)
 
 
-def niching(dd_func_archive, dd_archive, associationList, i_hardl):
+def cost(point,refPoint):
+    return calculatePBI(point, refPoint)
+
+
+def niching(dd_func_archive, dd_archive, associationList, refPoints, i_hardl):
     '''function to select points form the archive based on their distance and reference point associated to'''
 
-    clustered_dd_func_archive = []
-    clustered_dd_archive = []
+    clustered_dd_func_archive = copy.deepcopy(dd_func_archive)
+    clustered_dd_archive = copy.deepcopy(dd_archive)
 
-    while(len(clustered_dd_func_archive) < i_hardl):
-        # variable to hold the index of reference points which are non-empty and a point is yet to be selected form them
-        refPointSelectedList = []
+    while(len(clustered_dd_archive)>=i_hardl):
+        # find the subspace with the hightest no of associations
+        maxAssocIndex = -1
+        maxAssoc = -1
         for i in range(len(associationList)):
-            if(len(associationList[i]) != 0):
-                refPointSelectedList.append(i)
+            if(len(associationList[i])>maxAssoc):
+                maxAssoc = len(associationList[i])
+                maxAssocIndex = i
+        
+        # find the point with the maximum distance(cost) in that subspace
+        maxDistanceIndex = -1
+        maxDistance = -math.inf
+        for i in range(len(associationList[maxAssocIndex])):
+            distance = cost(associationList[maxAssocIndex][i][0],refPoints[maxAssocIndex])
+            if(distance>maxDistance):
+                maxDistance = distance
+                maxDistanceIndex = i
 
-        while(len(refPointSelectedList) != 0):
-            # find the ref point with least no of point associations
-            minAssociationIndex = -1
-            minAssociation = math.inf
-            for i in range(len(refPointSelectedList)):
-                if(minAssociation > len(associationList[refPointSelectedList[i]])):
-                    minAssociation = len(
-                        associationList[refPointSelectedList[i]])
-                    minAssociationIndex = refPointSelectedList[i]
-
-            # find the point with the least distance form that reference point
-            minDistanceIndex = -1
-            minDistance = math.inf
-            for i in range(len(associationList[minAssociationIndex])):
-                if(minDistance > associationList[minAssociationIndex][i][1]):
-                    minDistanceIndex = i
-                    minDistance = associationList[minAssociationIndex][i][1]
-
-            pointIndex = associationList[minAssociationIndex][minDistanceIndex][0]
-            # print("pointIndex :",pointIndex)#debug
-
-            # add the point to the archives
-            clustered_dd_func_archive.append(
-                dd_func_archive[pointIndex])
-            clustered_dd_archive.append(dd_archive[pointIndex])
-
-            #check the length of the new archive
-            if(len(clustered_dd_archive)>= i_hardl):
-                return clustered_dd_archive, clustered_dd_func_archive
-
-            # remove the point form the association list
-            associationList[minAssociationIndex].pop(minDistanceIndex)
-
-            # remove the ref point from the list
-            refPointSelectedList.remove(minAssociationIndex)
+        # removing the point
+        clustered_dd_func_archive.remove(associationList[maxAssocIndex][maxDistanceIndex][0])
+        clustered_dd_archive.remove(associationList[maxAssocIndex][maxDistanceIndex][1])
+        associationList[maxAssocIndex].pop(maxDistanceIndex)
 
     return clustered_dd_archive, clustered_dd_func_archive
 
@@ -381,14 +365,14 @@ def clustering2(amosaParams):
         dd_func_archive, amosaParams)
 
     # Getting the reference points (later to be genenrated only once)
-    refPoints = getRefPoints(amosaParams.i_no_offunc)
+    refPoints = amosaParams.refPoints
 
-    # association list[refPoint] contains list of [pointIndex, minDistance]
+    # association list[refPoint] contains list of [func_point,point]
     associationList = []
     for i in range(len(refPoints)):
         associationList.append([])
     # Associate each point to a reference point
-    associate(dd_func_archive, refPoints, associationList)
+    associate(dd_func_archive, dd_archive, refPoints, associationList)
 
     # debug
     # print("association list---------------------")
@@ -396,15 +380,15 @@ def clustering2(amosaParams):
     #     if(len(associationList[i]) != 0):
     #         print("association list ", i, "----------")
     #         for x in associationList[i]:
-    #             print(x[0], end=" ")
+    #             print(x)
     #         print()
 
     # perform niching
     clustered_dd_archive, clustered_dd_func_archive = niching(
-        dd_func_archive, dd_archive, associationList, amosaParams.i_hardl)
+        dd_func_archive, dd_archive, associationList, refPoints, amosaParams.i_hardl)
 
     # De-normalization
-    deNormalize(dd_func_archive, d_normalize_shift,
+    deNormalize(clustered_dd_func_archive, d_normalize_shift,
                 d_normalize_scale, amosaParams)
 
     #updating the real archive
@@ -414,7 +398,7 @@ def clustering2(amosaParams):
 
     #exit(0)#debug
 
-
+#------------------------------------------------------------------------------------------------------------
 def clustering(amosaParams):
     if(amosaParams.i_clustering_type == "0"):
         clustering1(amosaParams)
