@@ -7,10 +7,10 @@
 convFilename="Ref_AMOSA_conv.csv"
 rHVFilename="Ref_AMOSA_rHV.csv"
 
-if [ $2==0 ]; then
+if [ $2 -eq 0 ]; then
     convFilename="AMOSA_conv.csv"
     rHVFilename="AMOSA_rHV.csv"
-elif [ $2==1 ]; then
+elif [ $2 -eq 1 ]; then
     convFilename="Ref_AMOSA_conv.csv"
     rHVFilename="Ref_AMOSA_rHV.csv"
 fi
@@ -19,7 +19,13 @@ if [ -f $convFilename ]; then
     rm $convFilename
 fi
 
-rm ./plots/*
+if [ $2 -eq 0 ]; then
+    rm -r ./plots/AMOSA_plots
+    mkdir ./plots/AMOSA_plots
+elif [ $2 -eq 1 ]; then
+    rm -r ./plots/Ref_AMOSA_plots
+    mkdir ./plots/Ref_AMOSA_plots
+fi
 
 if [ -f $rHVFilename ]; then
     rm $rHVFilename
@@ -30,7 +36,13 @@ for i in {1..30}; do
     
     ./amosa_real.py "$1" "$2" "$3"
 
-    cp objective_values.txt ./plots/$1"_"$i.csv
+    if [ $3 -eq 3 ]; then
+        if [ $2 -eq 0 ]; then
+            cp objective_values.txt ./plots/AMOSA_plots/$1"_"$i.csv
+        elif [ $2 -eq 1 ]; then
+            cp objective_values.txt ./plots/Ref_AMOSA_plots/$1"_"$i.csv
+        fi
+    fi
     
     conv=$(./convergence.py "$4")
     echo "convergence : $conv"
