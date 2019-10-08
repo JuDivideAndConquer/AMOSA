@@ -33,9 +33,9 @@ def readParameters(amosaParams):
     amosaParams.refPoints = getRefPoints(amosaParams.i_no_offunc)
 
     # Setting hard and soft limits on archive size
-    amosaParams.i_hardl = 100
+    amosaParams.i_hardl = int(sys.argv[4])
     print('Hard-limit: ',amosaParams.i_hardl)
-    amosaParams.i_softl = 120
+    amosaParams.i_softl = int(sys.argv[5])
     print('Soft-limit: ',amosaParams.i_softl)
 
     # Setting the number of iterations per temperature

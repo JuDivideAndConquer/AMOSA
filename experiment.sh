@@ -29,12 +29,12 @@ if [ -f $convFilename ]; then
 fi
 
 if [ $2 -eq 0 ]; then
-    if [ -f ./results/plots/AMOSA_plots ]; then
+    if [ -e ./results/plots/AMOSA_plots ]; then
         rm -r ./results/plots/AMOSA_plots
     fi
         mkdir ./results/plots/AMOSA_plots
 elif [ $2 -eq 1 ]; then
-    if [ -f ./results/plots/Ref_AMOSA_plots ]; then
+    if [ -e ./results/plots/Ref_AMOSA_plots ]; then
         rm -r ./results/plots/Ref_AMOSA_plots
     fi
         mkdir ./results/plots/Ref_AMOSA_plots
@@ -44,10 +44,14 @@ if [ -f $rHVFilename ]; then
     rm $rHVFilename
 fi
 
+# calculating hard and soft limit
+hardl=( $(wc -l $4) )
+softl=$(( $hardl/5+$hardl ))
+
 for i in {1..30}; do
     echo -e "\niteration $i |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
     
-    ./amosa_real.py "$1" "$2" "$3"
+    ./amosa_real.py "$1" "$2" "$3" $hardl $softl
 
     if [ $3 -eq 3 ]; then
         if [ $2 -eq 0 ]; then

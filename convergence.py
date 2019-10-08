@@ -29,6 +29,7 @@ with open(sys.argv[1], "r") as fp:
         ref_points.append(point)
 
 ref_points = np.asfarray(ref_points)
+#print(len(ref_points))
 #print(ref_points)
 
 archive = []
