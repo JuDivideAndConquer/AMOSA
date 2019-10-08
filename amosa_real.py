@@ -42,7 +42,7 @@ def readParameters(amosaParams):
     amosaParams.i_no_ofiter = 500
 
     # Setting temperature limits
-    amosaParams.d_tmin = float(0.00001)
+    amosaParams.d_tmin = float(0.0000001)
     amosaParams.d_tmax = 200
 
     # Function range according to input variables

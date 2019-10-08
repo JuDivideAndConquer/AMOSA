@@ -44,8 +44,8 @@ def runAMOSA(amosaParams):
     tt=0
 
     def consoleprint(case,i):
-        print(  "__________________________________________________________________________________________________________________________________________________________", end='\r')
-        print(  'iteration: ' + str(i) +'\t\t'+ 'case ' + str(case) + '\t'+ 'archivesize: ' + str(amosaParams.i_archivesize) + '\t\t\t'+ str(tt) + 'th temp \t Temperature: ' + str(t), end='\r')
+        print(  "_____________________________________________________________________________________________________________________________________", end='\r')
+        print(  'iteration: ' + str(i) +'\t\t'+ 'case ' + str(case) + '\t'+ str(tt) + 'th temp \t Temperature: ' + '%.10f'%t  + '\t\t'+ 'archivesize: ' + str(amosaParams.i_archivesize), end='\r')
 
     while(t >= amosaParams.d_tmin):
         for i in range(amosaParams.i_no_ofiter):
@@ -265,7 +265,7 @@ def runAMOSA(amosaParams):
             real_time_graph_data.append([x1, x2])
 
 
-        t = round(t * amosaParams.d_alpha, 6)
+        t = round(t * amosaParams.d_alpha, 10)
         tt=tt+1
 
     print()
