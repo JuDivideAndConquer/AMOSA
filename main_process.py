@@ -293,6 +293,14 @@ def runAMOSA(amosaParams):
                     obj3.append(amosaParams.dd_func_archive[i][h])
             fp.write('\n')
 
+    with open('objective_values.txt', 'w+') as fp:
+
+        for i in range(amosaParams.i_archivesize):
+            #if(amosaParams.dd_func_archive[i][0]<2.5 and amosaParams.dd_func_archive[i][1]<2.5 and amosaParams.dd_func_archive[i][2]<2.5 ):#debug
+            for h in range(amosaParams.i_no_offunc):
+                fp.write(str(amosaParams.dd_func_archive[i][h]) + ' ')
+            fp.write('\n')
+
     with open('decision_values.txt', 'w+') as fp:
         for i in range(amosaParams.i_archivesize):
             fp.write('\n')

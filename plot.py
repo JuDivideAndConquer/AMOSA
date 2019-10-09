@@ -16,7 +16,7 @@ with open(sys.argv[1], "r") as fp:
         archive.append(point)
 
 
-if len(archive[0])>2:
+if len(archive[0])>3:
     print("Incorrect Dimensions\n")
     exit(0)
 
