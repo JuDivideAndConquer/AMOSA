@@ -49,6 +49,7 @@ hardl=($(wc -l $trueParetoFrontsFile))
 softl=$(($hardl / 5 + $hardl))
 
 for i in {1..3}; do
+
     echo -e "\n$func($nobj) algo:$algo iteration:$i |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
     plot="$plotfolder/run$i.csv"
     convFilename="$masterfolder/conv.csv"
