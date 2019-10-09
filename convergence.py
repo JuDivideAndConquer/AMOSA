@@ -33,7 +33,7 @@ ref_points = np.asfarray(ref_points)
 #print(ref_points)
 
 archive = []
-with open("./objective_values.txt", "r") as fp:
+with open(sys.argv[2], "r") as fp:
     lines = fp.readlines()
     for line in lines:
         point = line.split(" ")[:-1]

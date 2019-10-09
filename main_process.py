@@ -279,7 +279,7 @@ def runAMOSA(amosaParams):
     obj1 = []
     obj2 = []
     obj3 = []
-    with open('objective_values.txt', 'w+') as fp:
+    with open(sys.argv[6], 'w+') as fp:
 
         for i in range(amosaParams.i_archivesize):
             #if(amosaParams.dd_func_archive[i][0]<2.5 and amosaParams.dd_func_archive[i][1]<2.5 and amosaParams.dd_func_archive[i][2]<2.5 ):#debug

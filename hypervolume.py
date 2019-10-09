@@ -57,7 +57,7 @@ def approximate_hypervolume(F, r, samples):
 
 # entry point ----------------------------------------------------------------
 archive = []
-with open("./objective_values.txt", "r") as fp:
+with open(sys.argv[2], "r") as fp:
     lines = fp.readlines()
     for line in lines:
         point = line.split(" ")[:-1]
