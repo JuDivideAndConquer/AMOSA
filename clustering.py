@@ -86,20 +86,20 @@ def calculatePBI(point, refPoint):
     return d1 + theta*d2
 
 
-def associate(dd_func_archive,dd_archive, refPoints, associationList):
+def associate(normalized_dd_func_archive,dd_func_archive,dd_archive, refPoints, associationList):
     '''function to associate each point to a reference point'''
     for i in range(len(dd_func_archive)):
         minDistance = math.inf
         minDistanceIndex = -1
         for j in range(len(refPoints)):
-            d1,d2 = calculateD1D2(dd_func_archive[i], refPoints[j])
+            d1,d2 = calculateD1D2(normalized_dd_func_archive[i], refPoints[j])
             nDistance = d2
             # print("refpoint ", j, " , point ", i,
             #       " , distance :", nDistance)  # debug
             if(nDistance < minDistance):
                 minDistance = nDistance
                 minDistanceIndex = j
-        associationList[minDistanceIndex].append([dd_func_archive[i],dd_archive[i]])
+        associationList[minDistanceIndex].append([normalized_dd_func_archive[i],dd_func_archive[i],dd_archive[i]])
         # print("point ", i, " associated to ref point ", minDistanceIndex)
 
 
@@ -132,8 +132,8 @@ def niching(dd_func_archive, dd_archive, associationList, refPoints, i_hardl):
                 maxDistanceIndex = i
 
         # removing the point
-        clustered_dd_func_archive.remove(associationList[maxAssocIndex][maxDistanceIndex][0])
-        clustered_dd_archive.remove(associationList[maxAssocIndex][maxDistanceIndex][1])
+        clustered_dd_func_archive.remove(associationList[maxAssocIndex][maxDistanceIndex][1])
+        clustered_dd_archive.remove(associationList[maxAssocIndex][maxDistanceIndex][2])
         associationList[maxAssocIndex].pop(maxDistanceIndex)
 
     return clustered_dd_archive, clustered_dd_func_archive
@@ -141,22 +141,23 @@ def niching(dd_func_archive, dd_archive, associationList, refPoints, i_hardl):
 
 def clustering(amosaParams):
     # print("clustering called")
+    normalized_dd_func_archive = copy.deepcopy(amosaParams.dd_func_archive)
     dd_archive = copy.deepcopy(amosaParams.dd_archive)
     dd_func_archive = copy.deepcopy(amosaParams.dd_func_archive)
 
     # Normalization
     d_normalize_shift, d_normalize_scale = normalize(
-        dd_func_archive, amosaParams)
+        normalized_dd_func_archive, amosaParams)
 
     # Getting the reference points (later to be genenrated only once)
     refPoints = amosaParams.refPoints
 
-    # association list[refPoint] contains list of [func_point,point]
+    # association list[refPoint] contains list of [normalized_func_point,func_point,point]
     associationList = []
     for i in range(len(refPoints)):
         associationList.append([])
     # Associate each point to a reference point
-    associate(dd_func_archive, dd_archive, refPoints, associationList)
+    associate(normalized_dd_func_archive, dd_func_archive, dd_archive, refPoints, associationList)
 
     # debug
     # print("association list---------------------")
@@ -171,9 +172,9 @@ def clustering(amosaParams):
     clustered_dd_archive, clustered_dd_func_archive = niching(
         dd_func_archive, dd_archive, associationList, refPoints, amosaParams.i_hardl)
 
-    # De-normalization
-    deNormalize(clustered_dd_func_archive, d_normalize_shift,
-                d_normalize_scale, amosaParams)
+    # # De-normalization
+    # deNormalize(clustered_dd_func_archive, d_normalize_shift,
+    #             d_normalize_scale, amosaParams)
 
     #updating the real archive
     amosaParams.dd_archive = clustered_dd_archive
