@@ -48,7 +48,7 @@ mkdir $plotfolder
 hardl=($(wc -l $trueParetoFrontsFile))
 softl=$(($hardl / 5 + $hardl))
 
-for i in {1..3}; do
+for i in {1..30}; do
 
     echo -e "\n$func($nobj) algo:$algo iteration:$i |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
     plot="$plotfolder/run$i.csv"

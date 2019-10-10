@@ -3,19 +3,29 @@
 import numpy as np
 from numpy import linalg as LA
 import sys
+import math
 
+
+def EuclideanDistance(point1,point2):
+    if(len(point1)!=len(point2)):
+        print("Incorrect dimensions")
+        exit(1)
+    d = 0.0
+    for i in range(len(point1)):
+        d = d + (point1[i]-point2[i])**2
+    d = d/len(point1)
+    return d
 
 def conv(ref_points, archive):
-    d = 0.0
-    for i in range(0, len(archive)):
-        min_d = LA.norm(archive[i] - ref_points[0][1])
-        for j in range(1, len(ref_points)):
-            dd = LA.norm(archive[i] - ref_points[j][1])
-            if dd < min_d:
-                min_d = dd
-        d += min_d
-    d /= len(archive)
-    return d
+    d_sum = 0.0
+    for i in range(len(archive)):
+        min_d = math.inf
+        for j in range(len(ref_points)):
+            d = EuclideanDistance(ref_points[j],archive[i])
+            if(d<min_d):
+                min_d = d
+        d_sum = d_sum + min_d
+    return d_sum/len(archive)
 
 
 # main function---------------------------------------------
