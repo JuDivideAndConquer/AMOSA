@@ -55,13 +55,13 @@ for i in {1..30}; do
     convFilename="$masterfolder/conv.csv"
     rHVFilename="$masterfolder/rHV.csv"
 
-    ./amosa_real.py $func $algo $nobj $hardl $softl $plot
+    python3 ./amosa_real.py $func $algo $nobj $hardl $softl $plot
 
-    conv=$(./convergence.py "$trueParetoFrontsFile" "$plot")
+    conv=$(python3 ./convergence.py "$trueParetoFrontsFile" "$plot")
     echo "convergence : $conv"
     echo -e "$conv" >>$convFilename
 
-    rHV=$(./hypervolume.py "$func" "$plot")
+    rHV=$(python3 ./hypervolume.py "$func" "$plot")
     echo "hypervolume : $rHV"
     echo -e "$rHV" >>$rHVFilename
 
