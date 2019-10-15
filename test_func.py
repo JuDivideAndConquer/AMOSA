@@ -19,6 +19,7 @@ def init_functions(func):
         #obj = int(input("Enter the number of objective function: "))
         print("Number of objective functions: ",int(sys.argv[3]))#debug
         obj = int(sys.argv[3])
+        #obj = 3#debug1
         k = int()
         if(func == 'DTLZ1'):
             k = 5
@@ -239,3 +240,9 @@ def SCH2(input):
 # ZDT2
 # ZDT3
 # ZDT6
+
+# #debug1------------------
+# init_functions("DTLZ4")
+# n = [0.23283014799813717, 0.07271686334788285, 0.837415556989753, 0.2880155601019776, 0.8502792185879519, 0.13602367958946993, 0.7176110448441857, 0.008670714274496616, 0.3081985406310116, 0.2450245264592248, 0.8663607143774887, 0.7276614937443525]
+# e = evaluate(n,"DTLZ4",3)
+# print(e)

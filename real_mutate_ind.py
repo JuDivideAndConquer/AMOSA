@@ -51,7 +51,7 @@ import copy
 def real_mutate_ind(s, amosaParam):
     '''Function to perform mutation on individual input vector'''
 
-    b = 0.25  # search radius
+    b = 1  # search radius
     vect1 = [0] * amosaParam.i_totalno_var
     #snew = [0] * amosaParam.i_totalno_var
     for i in range(0, amosaParam.i_totalno_var, 1):
@@ -63,5 +63,5 @@ def real_mutate_ind(s, amosaParam):
         s[i] = s[i] + y
         if s[i] < amosaParam.d_min_real_var[i]:
             s[i] = amosaParam.d_min_real_var[i]
-        elif y > amosaParam.d_max_real_var[i]:
+        elif s[i] > amosaParam.d_max_real_var[i]:
             s[i] = amosaParam.d_max_real_var[i]

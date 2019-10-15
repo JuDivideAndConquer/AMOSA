@@ -2,6 +2,7 @@ from amosa import AMOSAType
 import random
 from test_func import evaluate
 from real_mutate_ind import real_mutate_ind
+import copy
 
 def initialize_sol(amosaParams):
     '''Function to initialize the solution set'''
@@ -21,14 +22,21 @@ def initialize_sol(amosaParams):
         d_area1 = []
         d_area2 = []
         for j in range(amosaParams.i_hillclimb_no):
-            d_eval = evaluate(amosaParams.dd_solution[i],amosaParams.c_problem,amosaParams.i_no_offunc)
+            d_eval = evaluate(amosaParams.dd_solution[j],amosaParams.c_problem,amosaParams.i_no_offunc)
 
             for k in range(amosaParams.i_no_offunc):
                 d_area1.append(d_eval[k])
+                # #debug
+                # if(len(amosaParams.dd_solution[k])!=amosaParams.i_totalno_var or d_eval[k]<0):
+                #     print("error intput:",amosaParams.dd_solution[k])
+                #     print("error output:",d_eval)
+                #     exit(0)
+                # #/debug
             
-            for k in range(amosaParams.i_totalno_var):
-                d_xnew.append(amosaParams.dd_solution[i][k])
-                
+            # for k in range(amosaParams.i_totalno_var):
+            #     d_xnew.append(amosaParams.dd_solution[i][k])
+            d_xnew = copy.deepcopy(amosaParams.dd_solution[i])
+ 
             real_mutate_ind(d_xnew,amosaParams)
             d_eval = evaluate(d_xnew, amosaParams.c_problem,amosaParams.i_no_offunc)
             

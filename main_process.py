@@ -55,6 +55,14 @@ def runAMOSA(amosaParams):
             func_new = evaluate(newsol, amosaParams.c_problem,
                                 amosaParams.i_no_offunc)
 
+            # for k in range(amosaParams.i_no_offunc):
+            #     #debug
+            #     if(func_new[k]<0):
+            #         print("error intput:",newsol)
+            #         print("error output:",func_new)
+            #         exit(0)
+            #     #/debug
+
             count1 = 0
             count2 = 0
             for j in range(amosaParams.i_no_offunc):
