@@ -44,8 +44,10 @@ def runAMOSA(amosaParams):
     tt=0
 
     def consoleprint(case,i):
-        print(  "______________________________________________________________________________________", end='\r')
-        print(  'iteration: ' + str(i) +'\t'+ 'case ' + str(case) + '\t'+ str(tt) + 'th temp \t Temperature: ' + '%.10f'%t  + '\t'+ 'archivesize: ' + str(amosaParams.i_archivesize), end='\r')
+        #print(  "______________________________________________________________________________________", end='\r')
+        #print(  'iteration: ' + str(i) +'\t'+ 'case ' + str(case) + '\t'+ str(tt) + 'th temp \t Temperature: ' + '%.10f'%t  + '\t'+ 'archivesize: ' + str(amosaParams.i_archivesize), end='\r')
+        print(  'Temperature: ' + '%.10f'%t , end='\r')
+
 
     while(t >= amosaParams.d_tmin):
         for i in range(amosaParams.i_no_ofiter):
