@@ -43,6 +43,28 @@ def runAMOSA(amosaParams):
     t = amosaParams.d_tmax
     tt=0
 
+
+    #debug----------------------------------------------------------
+    obj1 = []
+    obj2 = []
+    obj3 = []
+
+    for i in range(amosaParams.i_archivesize):
+        #if(amosaParams.dd_func_archive[i][0]<2.5 and amosaParams.dd_func_archive[i][1]<2.5 and amosaParams.dd_func_archive[i][2]<2.5 ):#debug
+        for h in range(amosaParams.i_no_offunc):
+            if h == 0:
+                obj1.append(amosaParams.dd_func_archive[i][h])
+            elif h == 1:
+                obj2.append(amosaParams.dd_func_archive[i][h])
+            elif h == 2:
+                obj3.append(amosaParams.dd_func_archive[i][h])
+
+    fig = plt.figure()
+    ax = plt.axes(projection='3d')
+    ax.scatter3D(obj1, obj2, obj3)
+    plt.show()
+    #/debug---------------------------------------------------------
+
     def consoleprint(case,i):
         print(  "_____________________________________________________________________________________________________________________________________", end='\r')
         print(  'iteration: ' + str(i) +'\t\t'+ 'case ' + str(case) + '\t'+ str(tt) + 'th temp \t Temperature: ' + '%.10f'%t  + '\t\t'+ 'archivesize: ' + str(amosaParams.i_archivesize), end='\r')

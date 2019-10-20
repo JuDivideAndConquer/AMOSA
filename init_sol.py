@@ -15,39 +15,39 @@ def initialize_sol(amosaParams):
         amosaParams.dd_solution.append(solution)
         
         
-    # Performing hill-climbing operation on solution of the archive
-    for i in range(amosaParams.i_softl):
-        d_eval = []
-        d_xnew = []
-        d_area1 = []
-        d_area2 = []
-        for j in range(amosaParams.i_hillclimb_no):
-            d_eval = evaluate(amosaParams.dd_solution[j],amosaParams.c_problem,amosaParams.i_no_offunc)
+    # # Performing hill-climbing operation on solution of the archive
+    # for i in range(amosaParams.i_softl):
+    #     d_eval = []
+    #     d_xnew = []
+    #     d_area1 = []
+    #     d_area2 = []
+    #     for j in range(amosaParams.i_hillclimb_no):
+    #         d_eval = evaluate(amosaParams.dd_solution[j],amosaParams.c_problem,amosaParams.i_no_offunc)
 
-            for k in range(amosaParams.i_no_offunc):
-                d_area1.append(d_eval[k])
-                # #debug
-                # if(len(amosaParams.dd_solution[k])!=amosaParams.i_totalno_var or d_eval[k]<0):
-                #     print("error intput:",amosaParams.dd_solution[k])
-                #     print("error output:",d_eval)
-                #     exit(0)
-                # #/debug
+    #         for k in range(amosaParams.i_no_offunc):
+    #             d_area1.append(d_eval[k])
+    #             # #debug
+    #             # if(len(amosaParams.dd_solution[k])!=amosaParams.i_totalno_var or d_eval[k]<0):
+    #             #     print("error intput:",amosaParams.dd_solution[k])
+    #             #     print("error output:",d_eval)
+    #             #     exit(0)
+    #             # #/debug
             
-            # for k in range(amosaParams.i_totalno_var):
-            #     d_xnew.append(amosaParams.dd_solution[i][k])
-            d_xnew = copy.deepcopy(amosaParams.dd_solution[i])
+    #         # for k in range(amosaParams.i_totalno_var):
+    #         #     d_xnew.append(amosaParams.dd_solution[i][k])
+    #         d_xnew = copy.deepcopy(amosaParams.dd_solution[i])
  
-            real_mutate_ind(d_xnew,amosaParams)
-            d_eval = evaluate(d_xnew, amosaParams.c_problem,amosaParams.i_no_offunc)
+    #         real_mutate_ind(d_xnew,amosaParams)
+    #         d_eval = evaluate(d_xnew, amosaParams.c_problem,amosaParams.i_no_offunc)
             
-            for k in range(amosaParams.i_no_offunc):
-                d_area2.append(d_eval[k])
+    #         for k in range(amosaParams.i_no_offunc):
+    #             d_area2.append(d_eval[k])
             
-            # Checking if all the new solutions are better than the old solutions
-            count=0
-            for k in range(amosaParams.i_no_offunc):
-                if(d_area1[k]>=d_area2[k]):
-                    count=count+1
-            if(count==amosaParams.i_no_offunc):
-                for k in range(amosaParams.i_totalno_var):
-                    amosaParams.dd_solution[i][k] = d_xnew[k]
+    #         # Checking if all the new solutions are better than the old solutions
+    #         count=0
+    #         for k in range(amosaParams.i_no_offunc):
+    #             if(d_area1[k]>=d_area2[k]):
+    #                 count=count+1
+    #         if(count==amosaParams.i_no_offunc):
+    #             for k in range(amosaParams.i_totalno_var):
+    #                 amosaParams.dd_solution[i][k] = d_xnew[k]
