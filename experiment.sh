@@ -35,20 +35,31 @@ if [ ! -e $trueParetoFrontsFile ]; then
     exit 1
 fi
 
+
+#iteration variable
+iter=1
+
 masterfolder="./results/$algoname-$func($nobj)"
 if [ -e $masterfolder ]; then
-    rm -r $masterfolder
+	plotfolder="$masterfolder/plots"
+	if [ -e $plotfolder ]; then
+		while [ -e "$plotfolder/run$iter.csv" ]; do
+			iter=$(($iter+1))
+		done
+	else
+		mkdir $plotfolder
+	fi
+else
+	mkdir $masterfolder
+	plotfolder="$masterfolder/plots"
+	mkdir $plotfolder
 fi
-mkdir $masterfolder
-
-plotfolder="$masterfolder/plots"
-mkdir $plotfolder
 
 # calculating hard and soft limit
 hardl=($(wc -l $trueParetoFrontsFile))
 softl=$(($hardl / 5 + $hardl))
 
-for i in {1..30}; do
+for (( i=$iter ; i<=30 ; i++ )); do
 
     echo -e "\n$func($nobj) algo:$algo iteration:$i ||||||||||||||||||||||||||||||||||||||||||||||||||||"
     plot="$plotfolder/run$i.csv"
