@@ -1,61 +1,61 @@
+# Reference point generation for decomposition based approach
+# Please use this look-up table for standard values of partitions
+# n_obj, p1, p2, n_pts
+# 3, 12, 0, 91
+# 5, 6, 0, 210
+# 8, 3, 2, 156
+# 10, 3, 2, 275
+# 15, 2, 1, 135
+
 import copy
+import numpy as np
 
 
-class form_ref_points(object):
-    '''class to hold the reference points'''
-
-    def __init__(self, n_obj, n_div):
-        '''arguments: no of objectives, no of divisions'''
-        self.m = n_obj
-        self.n = n_div
-        self.allPoints = []
+class form_ref_pts(object):
+    def __init__(self, m, divisions):
+        self.M = m - 1
+        self.div = divisions
         self.points = []
         self.form()
 
-    def recursivePointsGenerate(self, layer, point):
-        '''Generates the points recursively. Every permutation of values in layer is generated'''
-        if(len(point) == self.m):
-            # If point is an m dimensional vector
-            self.allPoints.append(point)
+    def recursive(self, arr, d, l):
+        arr_c = copy.deepcopy(arr)
+        if d == self.M - 1:
+            self.points.append(arr_c)
         else:
-            # If point is a <m dimensional vector
-            for i in range(len(layer)):
-                point_next = copy.deepcopy(point)
-                point_next.append(layer[i])
-                self.recursivePointsGenerate(layer, copy.deepcopy(point_next))
+            for i in range(0, l):
+                node_val = float(i) / float(self.div)
+                arr_next = copy.deepcopy(arr_c)
+                arr_next.append(node_val)
+                self.recursive(arr_next, d + 1, l - i)
 
     def form(self):
         layer = []
-        for i in range(0, self.n + 1):
-            layer.append(float(i)/float(self.n))
-        # layer holds the n+1 division in the range [0,1]
-
-        self.recursivePointsGenerate(layer, [])
-
-        for i in range(0, len(self.allPoints)):
-            s = sum(self.allPoints[i])
-            if(s == 1):
-                self.points.append(self.allPoints[i])
-
-# for higher objectives, partitioning using inner and outer divisions
+        for i in range(0, self.div + 1):
+            layer.append(float(i) / float(self.div))
+        for i in range(0, len(layer)):
+            l1 = []
+            l1.append(layer[i])
+            self.recursive(l1, 0, len(layer) - i)
+        for i in range(0, len(self.points)):
+            s = sum(self.points[i])
+            self.points[i].append(1.0 - s)
+        self.points = np.asarray(self.points)
 
 
-def form_refs(n_obj, outerDivisions, innerDivisions):
+def form_refs(dim, outer, inner):
     points = []
 
-    outerPoints = form_ref_points(n_obj, outerDivisions).points
-    innerPoints = form_ref_points(n_obj, innerDivisions).points
+    factory = form_ref_pts(dim, outer)
+    factory2 = form_ref_pts(dim, inner)
+    factory2.points = (factory2.points / 2) + (1.0 / (2.0 * dim))
 
-    for i in range(len(innerPoints)):
-        for j in range(n_obj):
-            innerPoints[i][j] = (innerPoints[i][j]/2) + (1.0/(2.0*n_obj))
+    for i in range(0, len(factory.points)):
+        points.append(factory.points[i])
+    for i in range(0, len(factory2.points)):
+        points.append(factory2.points[i])
 
-    for i in range(len(outerPoints)):
-        points.append(outerPoints[i])
-    for i in range(len(innerPoints)):
-        points.append(innerPoints[i])
-
-    return points
+    return np.asarray(points)
 
 
 # Entry point ----------------------------------
@@ -63,24 +63,25 @@ def getRefPoints(n_obj):
     '''returns generated reference points'''
     if(n_obj == 3):
         divisions = 12
-        refPoints = form_ref_points(n_obj, divisions)
+        refPoints = form_ref_pts(n_obj, divisions)
+        print("debug---------------\n no of refpoints:",len(refPoints.points))
         return refPoints.points
     elif(n_obj == 5):
         divisions = 6
-        refPoints = form_ref_points(n_obj, divisions)
+        refPoints = form_ref_pts(n_obj, divisions)
         return refPoints.points
     elif(n_obj == 8):
         outerDivisions = 3
         innerDivisions = 2
-        ref_points = form_refs(8, outerDivisions, innerDivisions)
+        ref_points = form_refs(n_obj, outerDivisions, innerDivisions)
         return ref_points
     elif(n_obj == 10):
         outerDivisions = 3
         innerDivisions = 2
-        ref_points = form_refs(8, outerDivisions, innerDivisions)
+        ref_points = form_refs(n_obj, outerDivisions, innerDivisions)
         return ref_points
     elif(n_obj == 15):
         outerDivisions = 2
         innerDivisions = 1
-        ref_points = form_refs(8, outerDivisions, innerDivisions)
+        ref_points = form_refs(n_obj, outerDivisions, innerDivisions)
         return ref_points
