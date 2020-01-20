@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+#Usage :
+# ./amosa_real <test_problem> <no_of_objectives> <hardl> <softl> <cooling_rate> <plot_file>
+
 from amosa import AMOSAType
 from test_func import VALID_FUNC
 from test_func import init_functions
@@ -7,10 +10,10 @@ from init_sol import initialize_sol
 from creating_archive import creating_archive
 from main_process import runAMOSA
 import math
-
+import sys
 
 def readParameters(amosaParams):
-    func = input('Enter the test function name: ')
+    func = sys.argv[1]
     if(not (func in VALID_FUNC)):
         print('Invaid function name. Exiting')
         exit()
@@ -22,8 +25,8 @@ def readParameters(amosaParams):
     amosaParams.i_no_offunc, amosaParams.i_totalno_var = init_functions(func)
 
     # Setting hard and soft limits on archive size
-    amosaParams.i_hardl = int(input('Enter the hard-limit: '))
-    amosaParams.i_softl = int(input('Enter the soft-limit: '))
+    amosaParams.i_hardl = int(sys.argv[3])
+    amosaParams.i_softl = int(sys.argv[4])
     if(amosaParams.i_softl < amosaParams.i_hardl):
         print('Invalid soft and hard limits. Exiting')
         exit()
@@ -41,7 +44,7 @@ def readParameters(amosaParams):
     amosaParams.i_hillclimb_no = 20
 
     # Setting the cooling rate
-    amosaParams.d_alpha = float(input('Enter the cooling rate: '))
+    amosaParams.d_alpha = float(sys.argv[5])
     if(amosaParams.d_alpha >= 1 or amosaParams.d_alpha < 0):
         print('Invalid cooling rate (0 < Cooling rate < 1). Exiting')
         exit()

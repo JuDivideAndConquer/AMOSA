@@ -64,7 +64,6 @@ def getRefPoints(n_obj):
     if(n_obj == 3):
         divisions = 12
         refPoints = form_ref_pts(n_obj, divisions)
-        print("debug---------------\n no of refpoints:",len(refPoints.points))
         return refPoints.points
     elif(n_obj == 5):
         divisions = 6

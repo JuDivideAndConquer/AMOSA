@@ -420,13 +420,22 @@ def runAMOSA(amosaParams):
         t = round(t * amosaParams.d_alpha, 10)
         tt=tt+1
 
-    if(amosaParams.i_no_offunc == 3):
-        real_time_plot(real_time_graph_data)
+    # uncomment the following lines to show real time graph
+    #if(amosaParams.i_no_offunc == 3):
+    #    real_time_plot(real_time_graph_data)
 
     # with open('saplot.out','w+') as fp:
     obj1 = []
     obj2 = []
     obj3 = []
+
+    if(len(sys.argv) > 6):
+        with open(sys.argv[6], 'w+') as fp:
+            for i in range(amosaParams.i_archivesize):
+                for h in range(amosaParams.i_no_offunc):
+                    fp.write(str(amosaParams.dd_func_archive[i][h]) + ' ') 
+                fp.write('\n')
+        
     with open('objective_values.txt', 'w+') as fp:
 
         for i in range(amosaParams.i_archivesize):
@@ -446,15 +455,13 @@ def runAMOSA(amosaParams):
             fp.write('\n')
             for h in range(amosaParams.i_totalno_var):
                 fp.write("\t" + str(amosaParams.dd_archive[i][h]))
-
-    if amosaParams.i_no_offunc == 2:
-        plt.plot(obj1, obj2, 'ro')
-        plt.show()
-    elif amosaParams.i_no_offunc == 3:
-        fig = plt.figure()
-        ax = plt.axes(projection='3d')
-        ax.scatter3D(obj1, obj2, obj3)
-        #print(  'iteration: ' + str(i) +'\t'+ 'case ' + str(case) + '\t'+ str(tt) + 'th temp \t Temperature: ' + '%.10f'%t  + '\t'+ 'archivesize: ' + str(amosaParams.i_archivesize), end='\r')
-        #print(  'iteration: ' + str(i) +'\t'+ 'case ' + str(case) + '\t'+ str(tt) + 'th temp \t Temperature: ' + '%.10f'%t  + '\t'+ 'archivesize: ' + str(amosaParams.i_archivesize), end='\r')
-        #print(  'iteration: ' + str(i) +'\t'+ 'case ' + str(case) + '\t'+ str(tt) + 'th temp \t Temperature: ' + '%.10f'%t  + '\t'+ 'archivesize: ' + str(amosaParams.i_archivesize), end='\r')
-        plt.show()
+    
+    #uncomment the lines below to show graphs
+    #if amosaParams.i_no_offunc == 2:
+    #    plt.plot(obj1, obj2, 'ro')
+    #    plt.show()
+    #elif amosaParams.i_no_offunc == 3:
+    #    fig = plt.figure()
+    #    ax = plt.axes(projection='3d')
+    #    ax.scatter3D(obj1, obj2, obj3)
+    #    plt.show()
