@@ -22,3 +22,4 @@ class AMOSAType:
     d_min_real_var = []		# Stores minimum value of the real variables
     d_max_real_var = []		# Stores maximum value of the real variables
     refPoints = []          # Stores the reference points
+    refPointsDistanceMatrix = [] # Distance matrix (Stores the order of distance between each pair of reference points)

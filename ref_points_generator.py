@@ -57,30 +57,61 @@ def form_refs(dim, outer, inner):
 
     return np.asarray(points)
 
+class distanceObj(object):
+    def __init__(self,r,c,points):
+        self.row = r
+        self.col = c
+        self.dis = self.distance(points[r],points[c])
+
+
+    def distance(self,refPoint1,refPoint2):
+        if(len(refPoint1) != len(refPoint2)):
+            print("Reference point dimension mismatch")
+            exit(0);
+        distance = 0
+        for i in range(len(refPoint1)):
+            distance = distance + (refPoint1[i]-refPoint2[i])**2
+        distance = distance**0.5
+        return distance
+
 
 # Entry point ----------------------------------
 def getRefPoints(n_obj):
     '''returns generated reference points'''
+    points=[]
     if(n_obj == 3):
         divisions = 12
         refPoints = form_ref_pts(n_obj, divisions)
-        return refPoints.points
+        points = refPoints.points
     elif(n_obj == 5):
         divisions = 6
         refPoints = form_ref_pts(n_obj, divisions)
-        return refPoints.points
+        points = refPoints.points
     elif(n_obj == 8):
         outerDivisions = 3
         innerDivisions = 2
         ref_points = form_refs(n_obj, outerDivisions, innerDivisions)
-        return ref_points
+        points = ref_points
     elif(n_obj == 10):
         outerDivisions = 3
         innerDivisions = 2
         ref_points = form_refs(n_obj, outerDivisions, innerDivisions)
-        return ref_points
+        points = ref_points
     elif(n_obj == 15):
         outerDivisions = 2
         innerDivisions = 1
         ref_points = form_refs(n_obj, outerDivisions, innerDivisions)
-        return ref_points
+        points = ref_points
+
+    distanceMatrix = []
+    for i in range(len(points)):
+        distanceRow = []
+        distanceIndexRow = []
+        for j in range(len(points)):
+            distanceRow.append(distanceObj(i,j,points))
+        distanceRow.sort(key=lambda x:x.dis)
+        for i in distanceRow:
+            distanceIndexRow.append(i.col)
+        distanceMatrix.append(distanceIndexRow)
+
+    return points,distanceMatrix

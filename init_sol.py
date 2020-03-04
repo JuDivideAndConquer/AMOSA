@@ -28,7 +28,8 @@ def initialize_sol(amosaParams):
             
             for k in range(amosaParams.i_totalno_var):
                 d_xnew.append(amosaParams.dd_solution[i][k])
-                
+
+            #####
             real_mutate_ind(d_xnew,amosaParams)
             d_eval = evaluate(d_xnew, amosaParams.c_problem,amosaParams.i_no_offunc)
             

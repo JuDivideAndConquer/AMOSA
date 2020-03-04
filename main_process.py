@@ -3,7 +3,7 @@ import random
 import copy
 import sys
 from math import *
-from real_mutate_ind import real_mutate_ind
+from real_mutate_ind import real_mutate_ind,ref_real_mutate_ind
 from test_func import evaluate
 from dominance import find_unsign_dom
 from dominance import is_dominated
@@ -129,7 +129,7 @@ def runAMOSA(amosaParams):
     tt=0
 
     # Getting the reference points (later to be genenrated only once)
-    amosaParams.refPoints = getRefPoints(amosaParams.i_no_offunc)
+    amosaParams.refPoints,amosaParams.refPointsDistanceMatrix = getRefPoints(amosaParams.i_no_offunc)
 
     # Setting the no of iterations as the multiple of n_dir closest to 500
     n_dir = len(amosaParams.refPoints)
@@ -188,7 +188,7 @@ def runAMOSA(amosaParams):
 
             duplicate = 0
             newsol = copy.deepcopy(current)
-            real_mutate_ind(newsol, amosaParams)
+            ref_real_mutate_ind(newsol, amosaParams, cur_ref_index, refPointAssociationList)
             func_new = evaluate(newsol, amosaParams.c_problem,
                                 amosaParams.i_no_offunc)
 
@@ -421,8 +421,8 @@ def runAMOSA(amosaParams):
         tt=tt+1
 
     # uncomment the following lines to show real time graph
-    #if(amosaParams.i_no_offunc == 3):
-    #    real_time_plot(real_time_graph_data)
+    if(amosaParams.i_no_offunc == 3):
+        real_time_plot(real_time_graph_data)
 
     # with open('saplot.out','w+') as fp:
     obj1 = []
@@ -457,11 +457,11 @@ def runAMOSA(amosaParams):
                 fp.write("\t" + str(amosaParams.dd_archive[i][h]))
     
     #uncomment the lines below to show graphs
-    #if amosaParams.i_no_offunc == 2:
-    #    plt.plot(obj1, obj2, 'ro')
-    #    plt.show()
-    #elif amosaParams.i_no_offunc == 3:
-    #    fig = plt.figure()
-    #    ax = plt.axes(projection='3d')
-    #    ax.scatter3D(obj1, obj2, obj3)
-    #    plt.show()
+    if amosaParams.i_no_offunc == 2:
+        plt.plot(obj1, obj2, 'ro')
+        plt.show()
+    elif amosaParams.i_no_offunc == 3:
+        fig = plt.figure()
+        ax = plt.axes(projection='3d')
+        ax.scatter3D(obj1, obj2, obj3)
+        plt.show()
