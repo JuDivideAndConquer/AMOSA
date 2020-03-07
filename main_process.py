@@ -38,6 +38,7 @@ def calculateD1D2(point,refPoint):
     for i in range(len(point)):
         d2Vector.append(point[i]-pointOnRef[i])
         d2 = d2 + (point[i]-pointOnRef[i])**2
+
     d2 = math.sqrt(d2)
 
     return d1,d2
@@ -457,11 +458,11 @@ def runAMOSA(amosaParams):
                 fp.write("\t" + str(amosaParams.dd_archive[i][h]))
     
     #uncomment the lines below to show graphs
-    if amosaParams.i_no_offunc == 2:
-        plt.plot(obj1, obj2, 'ro')
-        plt.show()
-    elif amosaParams.i_no_offunc == 3:
-        fig = plt.figure()
-        ax = plt.axes(projection='3d')
-        ax.scatter3D(obj1, obj2, obj3)
-        plt.show()
+    #if amosaParams.i_no_offunc == 2:
+    #    plt.plot(obj1, obj2, 'ro')
+    #    plt.show()
+    #elif amosaParams.i_no_offunc == 3:
+    #    fig = plt.figure()
+    #    ax = plt.axes(projection='3d')
+    #    ax.scatter3D(obj1, obj2, obj3)
+    #    plt.show()

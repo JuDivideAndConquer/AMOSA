@@ -14,6 +14,11 @@ def real_mutate_ind(s, amosaParam, b = 0.25):
         y = s[i_rand]
         y = mutate(y, amosaParam, i_rand, b)
         i_count = i_count + 1
+
+    if(y<amosaParam.d_min_real_var[i_rand]):
+        y=amosaParam.d_min_real_var[i_rand]
+    elif(y>amosaParam.d_max_real_var[i_rand]):
+        y=amosaParam.d_max_real_var[i_rand]
         
     # Update input vector element
     s[i_rand] = y
@@ -31,7 +36,7 @@ def distance(point1,point2):
         except OverflowError:
             print(OverflowError)
             print(point1[i],point2[i])
-            exit()
+            exit(0)
     distance = distance**0.5
     return distance
 
@@ -68,6 +73,11 @@ def ref_real_mutate_ind(s, amosaParams, cur_ref_index, refPointAssociationList):
     point1 = amosaParams.dd_archive[point1Ind[0]]
     point2 = amosaParams.dd_archive[point2Ind[0]]
     b = distance(point1, point2)
+    #print("b=",b)
+    #if(b>100):
+    #    print(point1)
+    #    print(point2)
+    #    exit(0)
     real_mutate_ind(s,amosaParams,b)
 
 
