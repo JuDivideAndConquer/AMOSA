@@ -2,7 +2,7 @@
 # 2nd arguement : no of objectives
 # 3rd arguement : file name of the true pareto front points
 # 4th arguement : no of interations
-# example : $ ./experiment.sh DTLZ1 true_pareto_fronts/DTLZ1\(3\).csv 30
+# example : $ ./experiment.sh DTLZ1 3 true_pareto_fronts/DTLZ1\(3\).csv 30
 
 # check if the result folder exists if not create one
 if [ ! -e results ]; then
@@ -46,7 +46,7 @@ softl=$(($hardl / 5 + $hardl))
 
 for (( i=$iter ; i<=$4 ; i++ )); do
 
-    echo -e "\n$func($nobj) algo:$algo iteration:$i ||||||||||||||||||||||||||||||||||||||||||||||||||||"
+    echo -e "\n$func($nobj) iteration:$i ||||||||||||||||||||||||||||||||||||||||||||||||||||"
     plot="$plotfolder/run$i.csv"
     convFilename="$masterfolder/conv.csv"
     rHVFilename="$masterfolder/rHV.csv"

@@ -422,8 +422,8 @@ def runAMOSA(amosaParams):
         tt=tt+1
 
     # uncomment the following lines to show real time graph
-    if(amosaParams.i_no_offunc == 3):
-        real_time_plot(real_time_graph_data)
+    #if(amosaParams.i_no_offunc == 3):
+    #    real_time_plot(real_time_graph_data)
 
     # with open('saplot.out','w+') as fp:
     obj1 = []
