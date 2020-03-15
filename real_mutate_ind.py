@@ -52,27 +52,29 @@ def ref_real_mutate_ind(s, amosaParams, cur_ref_index, refPointAssociationList):
                 break
     point1Ind=0
     point2Ind=0
-    try:
-        if(len(neigs)>1):
-            neigRefs = random.sample(neigs,2)
-            point1Ind = random.sample(refPointAssociationList[neigRefs[0]],1)
-            point2Ind = random.sample(refPointAssociationList[neigRefs[1]],1)
-        elif(len(neigs)==1):
-            point1Ind = random.sample(refPointAssociationList[cur_ref_index],1)
-            point2Ind = random.sample(refPointAssociationList[neigs[0]],1)
-        else:
-            point1Ind = random.sample(refPointAssociationList[cur_ref_index],1)
-            point2Ind = random.sample(refPointAssociationList[cur_ref_index],1)
-    except ValueError:
-        print(ValueError)
-        print(neigs)
-        for i in range(len(amosaParams.refPoints)):
-            print(refPointAssociationList[i])
-        exit(0)
+    flag = 0
+    if(len(neigs)>1):
+        neigRefs = random.sample(neigs,2)
+        point1Ind = random.sample(refPointAssociationList[neigRefs[0]],1)
+        point2Ind = random.sample(refPointAssociationList[neigRefs[1]],1)
+    elif(len(neigs)==1):
+        point1Ind = random.sample(refPointAssociationList[cur_ref_index],1)
+        point2Ind = random.sample(refPointAssociationList[neigs[0]],1)
+    elif(len(refPointAssociationList[cur_ref_index])>1):
+        point1Ind = random.sample(refPointAssociationList[cur_ref_index],1)
+        point2Ind = random.sample(refPointAssociationList[cur_ref_index],1)
+    else:
+        flag=1
+        b=0.5
 
-    point1 = amosaParams.dd_archive[point1Ind[0]]
-    point2 = amosaParams.dd_archive[point2Ind[0]]
-    b = distance(point1, point2)
+    if(flag==0):
+        point1 = amosaParams.dd_archive[point1Ind[0]]
+        point2 = amosaParams.dd_archive[point2Ind[0]]
+        b = distance(point1, point2)
+    else:
+        b=0.5
+    b=b*(10**random.randint(0,3))
+    
     #print("b=",b)
     #if(b>100):
     #    print(point1)
@@ -87,6 +89,7 @@ def rand():
     while x == 0:
         x = random.random()
     x = x-0.5
+    #x = x*(10**random.randint(-5,0))
     return x
 
 
