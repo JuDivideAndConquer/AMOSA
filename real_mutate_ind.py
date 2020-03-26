@@ -1,4 +1,5 @@
 import random
+import copy
 from math import *
 
 
@@ -41,7 +42,7 @@ def distance(point1,point2):
     distance = distance**0.5
     return distance
 
-def ref_real_mutate_ind(s, amosaParams, cur_ref_index, refPointAssociationList):
+def ref_real_mutate_ind(s, amosaParams, cur_ref_index, refPointAssociationList, temp):
     nNeig = int(0.2*len(amosaParams.refPoints))
     neigs = []
     nonEmp = 0
@@ -81,8 +82,8 @@ def ref_real_mutate_ind(s, amosaParams, cur_ref_index, refPointAssociationList):
     #    print(point1)
     #    print(point2)
     #    exit(0)
-    return real_mutate_ind(s,amosaParams,b)
-
+    s_new = real_mutate_ind(s,amosaParams,b)
+    return s_new
 
 def rand():
     '''Generates a random number with range (-0.5,0,5)'''
@@ -105,3 +106,42 @@ def mutate(y, amosaParam, i_rand, b):
         d_rand_lap = - b * log(1-2*fabs(d_rand))
     y = y + d_rand_lap
     return y
+
+def point_mutate(s, amosaParams, cur_ref_index, refPointAssociationList, temp):
+    s = ref_real_mutate_ind(s, amosaParams, cur_ref_index, refPointAssociationList, temp)
+    s = polynomial_mutate(s, temp, 100*temp, amosaParams.d_min_real_var, amosaParams.d_max_real_var)
+    return s
+
+# Testing new perturbation schemes------------------------------------------
+
+# Polynomial mutation - effective to escape local optima - it doesn't need any other candidate except the current candidate
+def polynomial_mutate(v, mut_prob, eta_m, min_x, max_x):
+    v_new = copy.deepcopy(v)
+    for i in range(0, len(v)):
+        r = random.random()
+        if (r < mut_prob):
+            y = v_new[i]
+            yl = min_x[i]
+            yu = max_x[i]
+
+            delta1 = (y - yl) / (yu - yl)
+            delta2 = (yu - y) / (yu - yl)
+
+            mut_pow = 1.0 / (eta_m + 1.0)
+            deltaq = 0.0
+
+            rnd = random.random()
+
+            if (rnd <= 0.5):
+                xy = 1.0 - delta1
+                val = (2.0 * rnd) + ((1.0 - (2.0 * rnd)) * (xy ** (eta_m + 1.0)))
+                deltaq = (val ** mut_pow) - 1.0
+            else:
+                xy = 1.0 - delta2
+                val = (2.0 * (1.0 - rnd)) + (2.0 * (rnd - 0.5) * (xy ** (eta_m + 1.0)))
+                deltaq = 1.0 - (val ** mut_pow)
+
+            y = y + deltaq * (yu - yl)
+            y = min(yu, max(yl, y))
+            v_new[i] = y
+    return v_new

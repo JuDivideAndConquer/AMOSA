@@ -3,7 +3,7 @@ import random
 import copy
 import sys
 from math import *
-from real_mutate_ind import real_mutate_ind,ref_real_mutate_ind
+from real_mutate_ind import point_mutate
 from test_func import evaluate
 from dominance import find_unsign_dom
 from dominance import is_dominated
@@ -189,7 +189,7 @@ def runAMOSA(amosaParams):
 
             duplicate = 0
             newsol = copy.deepcopy(current)
-            newsol = ref_real_mutate_ind(newsol, amosaParams, cur_ref_index, refPointAssociationList)
+            newsol = point_mutate(newsol, amosaParams, cur_ref_index, refPointAssociationList, t)
             func_new = evaluate(newsol, amosaParams.c_problem,
                                 amosaParams.i_no_offunc)
 
