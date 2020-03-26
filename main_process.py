@@ -189,7 +189,7 @@ def runAMOSA(amosaParams):
 
             duplicate = 0
             newsol = copy.deepcopy(current)
-            ref_real_mutate_ind(newsol, amosaParams, cur_ref_index, refPointAssociationList)
+            newsol = ref_real_mutate_ind(newsol, amosaParams, cur_ref_index, refPointAssociationList)
             func_new = evaluate(newsol, amosaParams.c_problem,
                                 amosaParams.i_no_offunc)
 

@@ -30,7 +30,7 @@ def initialize_sol(amosaParams):
                 d_xnew.append(amosaParams.dd_solution[i][k])
 
             #####
-            real_mutate_ind(d_xnew,amosaParams)
+            d_xnew = real_mutate_ind(d_xnew,amosaParams)
             d_eval = evaluate(d_xnew, amosaParams.c_problem,amosaParams.i_no_offunc)
             
             for k in range(amosaParams.i_no_offunc):

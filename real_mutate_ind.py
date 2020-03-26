@@ -22,6 +22,7 @@ def real_mutate_ind(s, amosaParam, b = 0.25):
         
     # Update input vector element
     s[i_rand] = y
+    return s
 
 
 
@@ -80,7 +81,7 @@ def ref_real_mutate_ind(s, amosaParams, cur_ref_index, refPointAssociationList):
     #    print(point1)
     #    print(point2)
     #    exit(0)
-    real_mutate_ind(s,amosaParams,b)
+    return real_mutate_ind(s,amosaParams,b)
 
 
 def rand():
