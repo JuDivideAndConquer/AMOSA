@@ -422,8 +422,8 @@ def runAMOSA(amosaParams):
         tt=tt+1
 
     # uncomment the following lines to show real time graph
-    #if(amosaParams.i_no_offunc == 3):
-    #    real_time_plot(real_time_graph_data)
+    if(amosaParams.i_no_offunc == 3):
+        real_time_plot(real_time_graph_data)
 
     # with open('saplot.out','w+') as fp:
     obj1 = []
@@ -458,11 +458,11 @@ def runAMOSA(amosaParams):
                 fp.write("\t" + str(amosaParams.dd_archive[i][h]))
     
     #uncomment the lines below to show graphs
-    #if amosaParams.i_no_offunc == 2:
-    #    plt.plot(obj1, obj2, 'ro')
-    #    plt.show()
-    #elif amosaParams.i_no_offunc == 3:
-    #    fig = plt.figure()
-    #    ax = plt.axes(projection='3d')
-    #    ax.scatter3D(obj1, obj2, obj3)
-    #    plt.show()
+    if amosaParams.i_no_offunc == 2:
+        plt.plot(obj1, obj2, 'ro')
+        plt.show()
+    elif amosaParams.i_no_offunc == 3:
+        fig = plt.figure()
+        ax = plt.axes(projection='3d')
+        ax.scatter3D(obj1, obj2, obj3)
+        plt.show()
