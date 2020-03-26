@@ -108,11 +108,111 @@ def mutate(y, amosaParam, i_rand, b):
     return y
 
 def point_mutate(s, amosaParams, cur_ref_index, refPointAssociationList, temp):
-    s = ref_real_mutate_ind(s, amosaParams, cur_ref_index, refPointAssociationList, temp)
-    s = polynomial_mutate(s, temp, 100*temp, amosaParams.d_min_real_var, amosaParams.d_max_real_var)
+    #s = ref_real_mutate_ind(s, amosaParams, cur_ref_index, refPointAssociationList, temp)
+    #s = polynomial_mutate(s, temp, 100*temp, amosaParams.d_min_real_var, amosaParams.d_max_real_var)
+    #s = diff_mut(amosaParams.dd_archive, amosaParams.refPointsDistanceMatrix, refPointAssociationList, cur_ref_index, s, amosaParams.d_min_real_var, amosaParams.d_max_real_var)
+    s = SBX_mut(amosaParams.dd_archive, amosaParams.refPointsDistanceMatrix, refPointAssociationList, cur_ref_index, s, amosaParams.d_min_real_var, amosaParams.d_max_real_var)
     return s
 
 # Testing new perturbation schemes------------------------------------------
+
+def getnNeighbours(n_samples, refPointsDistanceMatrix, refPointAssociationList, cur_ref_index): 
+    point_samples = []
+    count = 0
+    ref_nbr_no = 0
+    while(count < n_samples):
+        ref_nbr_index = refPointsDistanceMatrix[cur_ref_index][ref_nbr_no]
+        nbr_index_list = refPointAssociationList[ref_nbr_index]
+        samples_left = n_samples - count
+        if(len(nbr_index_list) > samples_left):
+            point_samples = point_samples + random.sample(nbr_index_list,samples_left)
+            count = count + samples_left
+        else:
+            point_samples = point_samples + nbr_index_list
+            count = count + len(nbr_index_list)
+
+        ref_nbr_no = ref_nbr_no + 1
+    return point_samples
+
+# GA based reproduction - it needs one more random candidate from the archive
+def SBX(parent1, parent2, eta_c, cross_prob, min_x, max_x):
+    child1 = copy.deepcopy(parent1)
+    child2 = copy.deepcopy(parent2)
+    EPS=0.0000000001
+    r = random.random()
+    if (r < cross_prob):
+        for i in range(0, len(parent1)):
+            r = random.random()
+            if (r <= 0.9):
+                if (abs(parent1[i] - parent2[i]) > EPS):
+                    y1 = min(parent1[i], parent2[i])
+                    y2 = max(parent1[i], parent2[i])
+                    yl = min_x[i]
+                    yu = max_x[i]
+                    r = random.random()
+                    beta = 1.0 + (2.0 * (y1 - yl) / (y2 - y1))
+                    alpha = 2.0 - (beta ** (-1.0 * (1.0 + eta_c)))
+                    betaq = 0.0
+                    if (r <= (1.0 / alpha)):
+                        betaq = (r * alpha) ** (1.0 / (eta_c + 1.0))
+                    else:
+                        betaq = (1.0 / (2.0 - (r * alpha))) ** (1.0 / (eta_c + 1.0))
+                    child1[i] = 0.5 * (y1 + y2 - (betaq * (y2 - y1)))
+
+                    beta = 1.0 + (2.0 * (yu - y2) / (y2 - y1))
+                    alpha = 2.0 - (beta ** (-1.0 * (1.0 + eta_c)))
+                    if (r <= (1.0 / alpha)):
+                        betaq = (r * alpha) ** (1.0 / (eta_c + 1.0))
+                    else:
+                        betaq = (1.0 / (2.0 - (r * alpha))) ** (1.0 / (eta_c + 1.0))
+                    child2[i] = 0.5 * ((y1 + y2) + (betaq * (y2 - y1)))
+
+                    child1[i] = min(yu, max(yl, child1[i]))
+                    child2[i] = min(yu, max(yl, child2[i]))
+
+                    r = random.random()
+                    if (r <= 0.5):
+                        sw = child1[i]
+                        child1[i] = child2[i]
+                        child2[i] = sw
+
+    return child1, child2
+
+
+def SBX_mut(archive, refPointsDistanceMatrix, refPointAssociationList, cur_ref_index, p1, min_x, max_x, eta_c = 30, cross_prob = 1):
+    point_samples = getnNeighbours(1, refPointsDistanceMatrix, refPointAssociationList, cur_ref_index)
+    p2 = copy.deepcopy(archive[point_samples[0]])
+
+    c1, c2 = SBX(p1, p2, eta_c, cross_prob, min_x, max_x)
+    v_new = []
+    rnd = random.random()
+    if (rnd > 0.5):
+        v_new = c1
+    else:
+        v_new = c2
+
+    return v_new
+
+
+# DE based reproduction - it needs 3 more random candidates from the archive
+def diff_mut(archive, refPointsDistanceMatrix, refPointAssociationList, cur_ref_index, v, min_x, max_x, F = 1, CR = 1):
+    size = len(v)
+
+    point_samples = getnNeighbours(3, refPointsDistanceMatrix, refPointAssociationList, cur_ref_index)
+    p1 = copy.deepcopy(archive[point_samples[0]])
+    p2 = copy.deepcopy(archive[point_samples[1]])
+    p3 = copy.deepcopy(archive[point_samples[2]])
+
+    k_rand = random.randint(0, size - 1)
+    u = copy.deepcopy(v)
+    for k in range(0, size):
+        r = random.random()
+        if ((r < CR) or (k == k_rand)):
+            u[k] = min(max_x[k], max(p1[k] + F * (p2[k] - p3[k]), min_x[k]))
+    print(v)
+    print(u)
+    exit(0)
+    return u
 
 # Polynomial mutation - effective to escape local optima - it doesn't need any other candidate except the current candidate
 def polynomial_mutate(v, mut_prob, eta_m, min_x, max_x):
