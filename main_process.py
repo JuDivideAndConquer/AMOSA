@@ -466,3 +466,6 @@ def runAMOSA(amosaParams):
         ax = plt.axes(projection='3d')
         ax.scatter3D(obj1, obj2, obj3)
         plt.show()
+    else:
+        from polar_plot import displat_polar_plot
+        displat_polar_plot(amosaParams.dd_func_archive, amosaParams.c_problem)
