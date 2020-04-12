@@ -1,6 +1,8 @@
 import random
+import math
 import copy
 from math import *
+from clustering import calculatePBI,calculateD1D2
 
 
 def real_mutate_ind(s, amosaParam, b = 0.25):
@@ -108,9 +110,10 @@ def mutate(y, amosaParam, i_rand, b):
     return y
 
 def point_mutate(s, amosaParams, cur_ref_index, refPointAssociationList, temp):
-    s = ref_real_mutate_ind(s, amosaParams, cur_ref_index, refPointAssociationList, temp)
-    s = polynomial_mutate(s, temp, 100*temp, amosaParams.d_min_real_var, amosaParams.d_max_real_var)
+    #s = ref_real_mutate_ind(s, amosaParams, cur_ref_index, refPointAssociationList, temp)
+    #s = polynomial_mutate(s, temp, 100*temp, amosaParams.d_min_real_var, amosaParams.d_max_real_var)
     #s = diff_mut(amosaParams.dd_archive, amosaParams.refPointsDistanceMatrix, refPointAssociationList, cur_ref_index, s, amosaParams.d_min_real_var, amosaParams.d_max_real_var)
+    s = diff_mut_best_1(amosaParams.dd_archive,amosaParams.dd_func_archive, amosaParams.refPoints, amosaParams.refPointsDistanceMatrix, refPointAssociationList, cur_ref_index, s, amosaParams.d_min_real_var, amosaParams.d_max_real_var)
     #s = SBX_mut(amosaParams.dd_archive, amosaParams.refPointsDistanceMatrix, refPointAssociationList, cur_ref_index, s, amosaParams.d_min_real_var, amosaParams.d_max_real_var)
     return s
 
@@ -195,7 +198,7 @@ def SBX_mut(archive, refPointsDistanceMatrix, refPointAssociationList, cur_ref_i
 
 
 # DE based reproduction - it needs 3 more random candidates from the archive
-def diff_mut(archive, refPointsDistanceMatrix, refPointAssociationList, cur_ref_index, v, min_x, max_x, F = 1, CR = 1):
+def diff_mut(archive, refPointsDistanceMatrix, refPointAssociationList, cur_ref_index, v, min_x, max_x, F = 0.1, CR = 1):
     size = len(v)
 
     point_samples = getnNeighbours(3, refPointsDistanceMatrix, refPointAssociationList, cur_ref_index)
@@ -205,13 +208,43 @@ def diff_mut(archive, refPointsDistanceMatrix, refPointAssociationList, cur_ref_
 
     k_rand = random.randint(0, size - 1)
     u = copy.deepcopy(v)
+    k = k_rand
     for k in range(0, size):
         r = random.random()
         if ((r < CR) or (k == k_rand)):
-            u[k] = min(max_x[k], max(p1[k] + F * (p2[k] - p3[k]), min_x[k]))
-    print(v)
-    print(u)
-    exit(0)
+            #u[k] = min(max_x[k], max(p1[k] + F * (p2[k] - p3[k]), min_x[k]))
+            u[k] = min(max_x[k], max(p1[k] , min_x[k]))
+    return u
+
+
+def diff_mut_best_1(archive,func_archive,refPoints, refPointsDistanceMatrix, refPointAssociationList, cur_ref_index, v, min_x, max_x, F = 0.1, CR = 0.5):
+    cur_ref = refPoints[cur_ref_index]
+    best_ind = -1
+    best_pbi = math.inf
+    
+
+    for i in refPointAssociationList[cur_ref_index]:
+        new_pbi = calculatePBI(func_archive[i],cur_ref)
+        if(new_pbi < best_pbi):
+            best_pbi = new_pbi
+            best_ind = i
+
+
+    best = archive[best_ind]
+
+    point_samples = getnNeighbours(2, refPointsDistanceMatrix, refPointAssociationList, cur_ref_index)
+    p1 = copy.deepcopy(archive[point_samples[0]])
+    p2 = copy.deepcopy(archive[point_samples[1]])
+
+    size = len(v)
+
+    k_rand = random.randint(0, size - 1)
+    u = copy.deepcopy(v)
+    k = k_rand
+    for k in range(0, size):
+        r = random.random()
+        if ((r < CR) or (k == k_rand)):
+            u[k] = min(max_x[k], max(best[k] + F * (p1[k] - p2[k]), min_x[k]))
     return u
 
 # Polynomial mutation - effective to escape local optima - it doesn't need any other candidate except the current candidate

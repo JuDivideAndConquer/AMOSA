@@ -159,7 +159,13 @@ def runAMOSA(amosaParams):
         #errorcheck(refPointAssociationList, pointAssociationList, amosaParams)
         sys.stdout.write("\033[k")
         sys.stdout.flush()
-        print(  'iteration: ' + str(i) +'\t'+ 'case ' + str(case) + '\t'+ str(tt) + 'th temp \t Temperature: ' + '%.10f'%t  + '\t'+ 'archivesize: ' + str(amosaParams.i_archivesize), end='\r')
+        non_empty_ref = 0
+        for x in refPointAssociationList:
+            if len(x)!=0:
+                non_empty_ref = non_empty_ref + 1
+        spread = non_empty_ref/len(refPointAssociationList) * 100
+        print(  'iteration: ' + str(i) +'\t'+ 'case ' + str(case) + '\t'+ str(tt) + 'th temp \t Temperature: ' + '%.10f'%t  + '\t'+ 'archivesize: ' + str(amosaParams.i_archivesize) + ' Spread: ' + str(non_empty_ref) + '/' + str(len(refPointAssociationList)), end='\r')
+        pass
 
     while(t >= amosaParams.d_tmin):
         for i in range(amosaParams.i_no_ofiter):
@@ -196,10 +202,17 @@ def runAMOSA(amosaParams):
             count1 = 0
             count2 = 0
             for j in range(amosaParams.i_no_offunc):
+                #debug
+                #print(func_current[j] - func_new[j])
                 if(func_current[j] <= func_new[j]):
                     count1 = count1+1
                 if(func_current[j] >= func_new[j]):
                     count2 = count2+1
+            
+            #debug
+            #print(count1,count2)
+            #exit(0)
+
 
             # case 1: If current dominates new-----------------------------------
             if(count1 == amosaParams.i_no_offunc):
@@ -346,6 +359,9 @@ def runAMOSA(amosaParams):
 
                 # case 2(a) : New point is dominated by k(k>=1) points in the archive
                 if(count > 0):
+                    #debug
+                    #print("New point is dominated by k(k>=1) points in the archive")
+                    #exit(0)
                     expp = float()
                     try:
                         expp = exp(deldom/t)
@@ -360,6 +376,9 @@ def runAMOSA(amosaParams):
 
                 # case 2(b) : New point is non-dominating with respect to all the points in the archive
                 elif(count == 0):
+                    #debug
+                    #print("New point is non-dominated")
+                    #exit(0)
                     area2 = copy.deepcopy(amosaParams.dd_func_archive)
                     archive1 = copy.deepcopy(amosaParams.dd_archive)
                     k = 0
