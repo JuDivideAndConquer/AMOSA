@@ -3,6 +3,7 @@ import math
 import copy
 from math import *
 from clustering import calculatePBI,calculateD1D2
+import numpy as np
 
 
 def real_mutate_ind(s, amosaParam, b = 0.25):
@@ -77,7 +78,7 @@ def ref_real_mutate_ind(s, amosaParams, cur_ref_index, refPointAssociationList, 
         b = distance(point1, point2)
     else:
         b=0.5
-    b=b*(10**random.randint(0,3))
+    #b=b*(10**random.randint(0,3))
     
     #print("b=",b)
     #if(b>100):
@@ -110,10 +111,10 @@ def mutate(y, amosaParam, i_rand, b):
     return y
 
 def point_mutate(s, amosaParams, cur_ref_index, refPointAssociationList, temp):
-    #s = ref_real_mutate_ind(s, amosaParams, cur_ref_index, refPointAssociationList, temp)
+    s = ref_real_mutate_ind(s, amosaParams, cur_ref_index, refPointAssociationList, temp)
     #s = polynomial_mutate(s, temp, 100*temp, amosaParams.d_min_real_var, amosaParams.d_max_real_var)
     #s = diff_mut(amosaParams.dd_archive, amosaParams.refPointsDistanceMatrix, refPointAssociationList, cur_ref_index, s, amosaParams.d_min_real_var, amosaParams.d_max_real_var)
-    s = diff_mut_best_1(amosaParams.dd_archive,amosaParams.dd_func_archive, amosaParams.refPoints, amosaParams.refPointsDistanceMatrix, refPointAssociationList, cur_ref_index, s, amosaParams.d_min_real_var, amosaParams.d_max_real_var)
+    #s = diff_mut_best_1(amosaParams.dd_archive,amosaParams.dd_func_archive, amosaParams.refPoints, amosaParams.refPointsDistanceMatrix, refPointAssociationList, cur_ref_index, s, amosaParams.d_min_real_var, amosaParams.d_max_real_var)
     #s = SBX_mut(amosaParams.dd_archive, amosaParams.refPointsDistanceMatrix, refPointAssociationList, cur_ref_index, s, amosaParams.d_min_real_var, amosaParams.d_max_real_var)
     return s
 
@@ -121,20 +122,26 @@ def point_mutate(s, amosaParams, cur_ref_index, refPointAssociationList, temp):
 
 def getnNeighbours(n_samples, refPointsDistanceMatrix, refPointAssociationList, cur_ref_index): 
     point_samples = []
+    ref_samples = []
     count = 0
-    ref_nbr_no = 0
+    ref_nbr_no = 1
+    polarity = 1
     while(count < n_samples):
-        ref_nbr_index = refPointsDistanceMatrix[cur_ref_index][ref_nbr_no]
+        ref_nbr_index = refPointsDistanceMatrix[cur_ref_index][polarity*ref_nbr_no]
         nbr_index_list = refPointAssociationList[ref_nbr_index]
         samples_left = n_samples - count
         if(len(nbr_index_list) > samples_left):
             point_samples = point_samples + random.sample(nbr_index_list,samples_left)
+            ref_samples.append(ref_nbr_index)
             count = count + samples_left
-        else:
+        elif(len(nbr_index_list)!=0):
             point_samples = point_samples + nbr_index_list
+            ref_samples.append(ref_nbr_index)
             count = count + len(nbr_index_list)
 
-        ref_nbr_no = ref_nbr_no + 1
+        ref_nbr_no = (ref_nbr_no + 1) % len(refPointAssociationList)
+ 
+    #print(cur_ref_index, ref_samples)
     return point_samples
 
 # GA based reproduction - it needs one more random candidate from the archive
@@ -198,13 +205,20 @@ def SBX_mut(archive, refPointsDistanceMatrix, refPointAssociationList, cur_ref_i
 
 
 # DE based reproduction - it needs 3 more random candidates from the archive
-def diff_mut(archive, refPointsDistanceMatrix, refPointAssociationList, cur_ref_index, v, min_x, max_x, F = 0.1, CR = 1):
+def diff_mut(archive, refPointsDistanceMatrix, refPointAssociationList, cur_ref_index, v, min_x, max_x, F = 1, CR = 0.5):
     size = len(v)
 
+    F = np.random.laplace(size=1)
+
     point_samples = getnNeighbours(3, refPointsDistanceMatrix, refPointAssociationList, cur_ref_index)
-    p1 = copy.deepcopy(archive[point_samples[0]])
-    p2 = copy.deepcopy(archive[point_samples[1]])
-    p3 = copy.deepcopy(archive[point_samples[2]])
+    try:
+        p1 = copy.deepcopy(archive[point_samples[0]])
+        p2 = copy.deepcopy(archive[point_samples[1]])
+        p3 = copy.deepcopy(archive[point_samples[2]])
+    except IndexError:
+        print("IndexError:")
+        print(len(archive),point_samples)
+        exit(0)
 
     k_rand = random.randint(0, size - 1)
     u = copy.deepcopy(v)
@@ -212,8 +226,7 @@ def diff_mut(archive, refPointsDistanceMatrix, refPointAssociationList, cur_ref_
     for k in range(0, size):
         r = random.random()
         if ((r < CR) or (k == k_rand)):
-            #u[k] = min(max_x[k], max(p1[k] + F * (p2[k] - p3[k]), min_x[k]))
-            u[k] = min(max_x[k], max(p1[k] , min_x[k]))
+            u[k] = min(max_x[k], max(p1[k] + F * (p2[k] - p3[k]), min_x[k]))
     return u
 
 

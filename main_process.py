@@ -64,6 +64,18 @@ def associateAllPoints(refPointAssociationList, pointAssociationList, refPoints,
         pointAssociationList[i]=minDistanceIndex 
     return refPointAssociationList, pointAssociationList
 
+def refPointToAssociate(refPoints, func_point):
+    minDistance = math.inf
+    minDistanceIndex = -1
+    for j in range(len(refPoints)):
+        d1,d2 = calculateD1D2(func_point, refPoints[j])
+        nDistance = d2
+        if(nDistance < minDistance):
+            minDistance = nDistance
+            minDistanceIndex = j
+    return minDistanceIndex
+
+
 def associatePoint(refPointAssociationList, pointAssociationList, refPoints, dd_func_archive, pos):
     minDistance = math.inf
     minDistanceIndex = -1
@@ -82,6 +94,7 @@ def associatePoint(refPointAssociationList, pointAssociationList, refPoints, dd_
 def errorcheck(refPointAssociationList, pointAssociationList, amosaParams):
     if(len(pointAssociationList) != len(amosaParams.dd_archive)):
         print("PointAssociationList length mismatch, list len:", len(pointAssociationList), " archive length:", len(amosaParams.dd_archive))
+        return True
     for i in range(len(pointAssociationList)):
         j = pointAssociationList[i]
         if(i not in refPointAssociationList[j]):
@@ -170,34 +183,55 @@ def runAMOSA(amosaParams):
     while(t >= amosaParams.d_tmin):
         for i in range(amosaParams.i_no_ofiter):
 
-            if(i%(n_dir+1)==0):
+            all_visited = True
+            for ref_index in range(len(visitedRefDir)):
+                if(visitedRefDir[ref_index]==0 and len(refPointAssociationList[ref_index])>0):
+                    all_visited = False
+                    break
+
+            if(i%(n_dir+1)==0 or all_visited):
                 #set all reference directions as unvisited
                 visitedRefDir = [0]*n_dir
 
             #direction with which current point is associated with
-            cur_ref_index = pointAssociationList[pos]
+            #cur_ref_index = pointAssociationList[pos]
+            cur_ref_index = refPointToAssociate(amosaParams.refPoints, func_new)
+
+            #debug
+            #print(visitedRefDir)
+            #for i in range(len(refPointAssociationList)):
+            #    if(len(refPointAssociationList[i])!=0):
+            #        print(i, end=",")
+            #print()
+
             
             if(visitedRefDir[cur_ref_index] == 0):
                 visitedRefDir[cur_ref_index] = 1
             else:
-                while(visitedRefDir[cur_ref_index]!=1 and len(refPointAssociationList[cur_ref_index])!=0):
+                while(visitedRefDir[cur_ref_index]==1 or len(refPointAssociationList[cur_ref_index])==0):
                     cur_ref_index = random.randrange(len(visitedRefDir))
-                visitedRefDir[cur_ref_index] = 1
                 pos = random.choice(refPointAssociationList[cur_ref_index])
                 try:
                     current = copy.deepcopy(amosaParams.dd_archive[pos])
                 except IndexError as e:
                     print(str(e))
-                    print("line 180", pos, len(amosaParams.dd_archive))
+                    print("line 18d0", pos, len(amosaParams.dd_archive))
                     print(refPointAssociationList[cur_ref_index])
                     exit()
                 func_current = copy.deepcopy(amosaParams.dd_func_archive[pos])
 
             duplicate = 0
+
+            if(errorcheck(refPointAssociationList, pointAssociationList, amosaParams)):
+                print("Error before mutation")
+                exit(0)
             newsol = copy.deepcopy(current)
             newsol = point_mutate(newsol, amosaParams, cur_ref_index, refPointAssociationList, t)
             func_new = evaluate(newsol, amosaParams.c_problem,
                                 amosaParams.i_no_offunc)
+
+            #debug
+            #print(cur_ref_index, refPointToAssociate(amosaParams.refPoints, func_new))
 
             count1 = 0
             count2 = 0
@@ -245,6 +279,10 @@ def runAMOSA(amosaParams):
                     current = copy.deepcopy(newsol)
                     func_current = copy.deepcopy(func_new)
                     flag = 0
+
+                if(errorcheck(refPointAssociationList, pointAssociationList, amosaParams)):
+                    print("Error after case 1")
+                    exit(0)
 
             # case 3: If new solution dominates the current----------------------
             elif(count2 == amosaParams.i_no_offunc):
@@ -343,6 +381,10 @@ def runAMOSA(amosaParams):
                     flag = 1
                     pos = m
 
+                if(errorcheck(refPointAssociationList, pointAssociationList, amosaParams)):
+                    print("Error after case 3")
+                    exit(0)
+
             # case 2 : Current and newsol are non-dominating to each-other-------
             else:
                 count = 0
@@ -407,7 +449,7 @@ def runAMOSA(amosaParams):
                     if(len(pointAssociationList) != len(amosaParams.dd_func_archive)):
                         print("length mismatch after line 377", len(pointAssociationList),len(amosaParams.dd_archive))
                         print(pointAssociationList)
-                        exit()
+                        exit(0)
 
                     # Re shifted clustering
                     if(amosaParams.i_archivesize > amosaParams.i_softl):
@@ -427,6 +469,10 @@ def runAMOSA(amosaParams):
                     flag = 1
                     pos = m
 
+                if(errorcheck(refPointAssociationList, pointAssociationList, amosaParams)):
+                    print("Error after case 1")
+                    exit(0)
+
         if(amosaParams.i_no_offunc == 3):
             x1 = []
             x2 = []
@@ -439,6 +485,9 @@ def runAMOSA(amosaParams):
 
         t = round(t * amosaParams.d_alpha, 10)
         tt=tt+1
+        
+    # added clustering at end
+    clustering(amosaParams)
 
     # uncomment the following lines to show real time graph
     if(amosaParams.i_no_offunc == 3):

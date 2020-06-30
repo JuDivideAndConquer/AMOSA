@@ -121,6 +121,10 @@ def niching(dd_func_archive, dd_archive, associationList, refPoints, i_hardl):
             if(len(associationList[i])>maxAssoc):
                 maxAssoc = len(associationList[i])
                 maxAssocIndex = i
+
+        if(maxAssoc == 1):
+            print("Removing singleton subspace point")
+            exit(0)
         
         # find the point with the maximum distance(cost) in that subspace
         maxDistanceIndex = -1
