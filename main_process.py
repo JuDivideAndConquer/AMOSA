@@ -16,7 +16,7 @@ from ref_points_generator import getRefPoints
 
 
 # Calculation of d1 and d2 (here it is not adjusted for the skipping of normalization)
-def calculateD1D2(point,refPoint):
+def calculateD1D2(point, refPoint):
     # calculate d1
     refPointMod = 0.0
     for x in refPoint:
@@ -41,10 +41,12 @@ def calculateD1D2(point,refPoint):
 
     d2 = math.sqrt(d2)
 
-    return d1,d2
+    return d1, d2
 
 # function to assciate points with reference points
 # fills up the refPointAssociationList and pointAssociationList
+
+
 def associateAllPoints(refPointAssociationList, pointAssociationList, refPoints, dd_func_archive):
     pointAssociationList = [-1]*len(dd_func_archive)
     refPointAssociationList = []
@@ -55,20 +57,21 @@ def associateAllPoints(refPointAssociationList, pointAssociationList, refPoints,
         minDistance = math.inf
         minDistanceIndex = -1
         for j in range(len(refPoints)):
-            d1,d2 = calculateD1D2(dd_func_archive[i], refPoints[j])
+            d1, d2 = calculateD1D2(dd_func_archive[i], refPoints[j])
             nDistance = d2
             if(nDistance < minDistance):
                 minDistance = nDistance
                 minDistanceIndex = j
         refPointAssociationList[minDistanceIndex].append(i)
-        pointAssociationList[i]=minDistanceIndex 
+        pointAssociationList[i] = minDistanceIndex
     return refPointAssociationList, pointAssociationList
+
 
 def refPointToAssociate(refPoints, func_point):
     minDistance = math.inf
     minDistanceIndex = -1
     for j in range(len(refPoints)):
-        d1,d2 = calculateD1D2(func_point, refPoints[j])
+        d1, d2 = calculateD1D2(func_point, refPoints[j])
         nDistance = d2
         if(nDistance < minDistance):
             minDistance = nDistance
@@ -80,7 +83,7 @@ def associatePoint(refPointAssociationList, pointAssociationList, refPoints, dd_
     minDistance = math.inf
     minDistanceIndex = -1
     for j in range(len(refPoints)):
-        d1,d2 = calculateD1D2(dd_func_archive[pos], refPoints[j])
+        d1, d2 = calculateD1D2(dd_func_archive[pos], refPoints[j])
         nDistance = d2
         if(nDistance < minDistance):
             minDistance = nDistance
@@ -88,27 +91,31 @@ def associatePoint(refPointAssociationList, pointAssociationList, refPoints, dd_
     refPointAssociationList[minDistanceIndex].append(pos)
     if(len(pointAssociationList) == pos):
         pointAssociationList.append(-1)
-    pointAssociationList[pos]=minDistanceIndex  
+    pointAssociationList[pos] = minDistanceIndex
     return refPointAssociationList, pointAssociationList
+
 
 def errorcheck(refPointAssociationList, pointAssociationList, amosaParams):
     if(len(pointAssociationList) != len(amosaParams.dd_archive)):
-        print("PointAssociationList length mismatch, list len:", len(pointAssociationList), " archive length:", len(amosaParams.dd_archive))
+        print("PointAssociationList length mismatch, list len:", len(
+            pointAssociationList), " archive length:", len(amosaParams.dd_archive))
         return True
     for i in range(len(pointAssociationList)):
         j = pointAssociationList[i]
         if(i not in refPointAssociationList[j]):
-            print(i,"th point not in ",j,"th refPoint: ",refPointAssociationList[j])
+            print(i, "th point not in ", j, "th refPoint: ",
+                  refPointAssociationList[j])
             return True
     return False
 
-def associateRemovePoint(refPointAssociationList, pointAssociationList, pos, amosaParams): 
+
+def associateRemovePoint(refPointAssociationList, pointAssociationList, pos, amosaParams):
     refPointAssociationList[pointAssociationList[pos]].remove(pos)
     for i in range(pos+1, len(pointAssociationList)):
-        ref_ind = pointAssociationList[i];
-        refPointAssociationList[ref_ind].remove(i);
-        refPointAssociationList[ref_ind].append(i-1);
-    pointAssociationList.pop(pos);
+        ref_ind = pointAssociationList[i]
+        refPointAssociationList[ref_ind].remove(i)
+        refPointAssociationList[ref_ind].append(i-1)
+    pointAssociationList.pop(pos)
     return refPointAssociationList, pointAssociationList
 
 
@@ -140,15 +147,16 @@ def runAMOSA(amosaParams):
     func_current = copy.deepcopy(amosaParams.dd_func_archive[r])
 
     t = amosaParams.d_tmax
-    tt=0
+    tt = 0
 
     # Getting the reference points (later to be genenrated only once)
-    amosaParams.refPoints,amosaParams.refPointsDistanceMatrix = getRefPoints(amosaParams.i_no_offunc)
+    amosaParams.refPoints, amosaParams.refPointsDistanceMatrix = getRefPoints(
+        amosaParams.i_no_offunc)
 
     # Setting the no of iterations as the multiple of n_dir closest to 500
     n_dir = len(amosaParams.refPoints)
     amosaParams.i_no_ofiter = n_dir*round(500/n_dir)
-    
+
     #list to maintain the list of visited reference points
     # 0 means unvisited
     # 1 means visited
@@ -161,23 +169,25 @@ def runAMOSA(amosaParams):
     # list to indicate which reference point the point belongs to
     pointAssociationList = [-1]*amosaParams.i_archivesize
 
-    refPointAssociationList, pointAssociationList = associateAllPoints(refPointAssociationList, pointAssociationList, amosaParams.refPoints, amosaParams.dd_func_archive)
+    refPointAssociationList, pointAssociationList = associateAllPoints(
+        refPointAssociationList, pointAssociationList, amosaParams.refPoints, amosaParams.dd_func_archive)
 
-    print("No of reference directions: ",n_dir)
+    print("No of reference directions: ", n_dir)
     print("No of iterations per temp: ", amosaParams.i_no_ofiter)
 
-    def consoleprint(case,i):
-        #print(pos, pointAssociationList) 
+    def consoleprint(case, i):
+        #print(pos, pointAssociationList)
         #print('case ' + str(case)  + '\t'+ 'archivesize: ' + str(amosaParams.i_archivesize) + '\t' + 'aList:' + str(len(pointAssociationList)))
         #errorcheck(refPointAssociationList, pointAssociationList, amosaParams)
         sys.stdout.write("\033[k")
         sys.stdout.flush()
         non_empty_ref = 0
         for x in refPointAssociationList:
-            if len(x)!=0:
+            if len(x) != 0:
                 non_empty_ref = non_empty_ref + 1
         spread = non_empty_ref/len(refPointAssociationList) * 100
-        print(  'iteration: ' + str(i) +'\t'+ 'case ' + str(case) + '\t'+ str(tt) + 'th temp \t Temperature: ' + '%.10f'%t  + '\t'+ 'archivesize: ' + str(amosaParams.i_archivesize) + ' Spread: ' + str(non_empty_ref) + '/' + str(len(refPointAssociationList)), end='\r')
+        print('iteration: ' + str(i) + '\t' + 'case ' + str(case) + '\t' + str(tt) + 'th temp \t Temperature: ' + '%.10f' % t + '\t' +
+              'archivesize: ' + str(amosaParams.i_archivesize) + ' Spread: ' + str(non_empty_ref) + '/' + str(len(refPointAssociationList)), end='\r')
         pass
 
     while(t >= amosaParams.d_tmin):
@@ -185,17 +195,18 @@ def runAMOSA(amosaParams):
 
             all_visited = True
             for ref_index in range(len(visitedRefDir)):
-                if(visitedRefDir[ref_index]==0 and len(refPointAssociationList[ref_index])>0):
+                if(visitedRefDir[ref_index] == 0 and len(refPointAssociationList[ref_index]) > 0):
                     all_visited = False
                     break
 
-            if(i%(n_dir+1)==0 or all_visited):
+            if(i % (n_dir+1) == 0 or all_visited):
                 #set all reference directions as unvisited
                 visitedRefDir = [0]*n_dir
 
             #direction with which current point is associated with
             #cur_ref_index = pointAssociationList[pos]
-            cur_ref_index = refPointToAssociate(amosaParams.refPoints, func_new)
+            cur_ref_index = refPointToAssociate(
+                amosaParams.refPoints, func_new)
 
             #debug
             #print(visitedRefDir)
@@ -204,11 +215,10 @@ def runAMOSA(amosaParams):
             #        print(i, end=",")
             #print()
 
-            
             if(visitedRefDir[cur_ref_index] == 0):
                 visitedRefDir[cur_ref_index] = 1
             else:
-                while(visitedRefDir[cur_ref_index]==1 or len(refPointAssociationList[cur_ref_index])==0):
+                while(visitedRefDir[cur_ref_index] == 1 or len(refPointAssociationList[cur_ref_index]) == 0):
                     cur_ref_index = random.randrange(len(visitedRefDir))
                 pos = random.choice(refPointAssociationList[cur_ref_index])
                 try:
@@ -226,7 +236,8 @@ def runAMOSA(amosaParams):
                 print("Error before mutation")
                 exit(0)
             newsol = copy.deepcopy(current)
-            newsol = point_mutate(newsol, amosaParams, cur_ref_index, refPointAssociationList, t)
+            newsol = point_mutate(newsol, amosaParams,
+                                  cur_ref_index, refPointAssociationList, t)
             func_new = evaluate(newsol, amosaParams.c_problem,
                                 amosaParams.i_no_offunc)
 
@@ -242,15 +253,14 @@ def runAMOSA(amosaParams):
                     count1 = count1+1
                 if(func_current[j] >= func_new[j]):
                     count2 = count2+1
-            
+
             #debug
             #print(count1,count2)
             #exit(0)
 
-
             # case 1: If current dominates new-----------------------------------
             if(count1 == amosaParams.i_no_offunc):
-                consoleprint(1,i)
+                consoleprint(1, i)
                 deldom = 0.0
                 amount = find_unsign_dom(func_current, func_new, amosaParams)
                 deldom = deldom + amount
@@ -289,7 +299,7 @@ def runAMOSA(amosaParams):
                 k = 0
                 count = 0
                 deldom = math.inf
-                consoleprint(3,i)
+                consoleprint(3, i)
                 for j in range(amosaParams.i_archivesize):
                     isdom = is_dominated(
                         amosaParams.dd_func_archive[j], func_new, amosaParams)
@@ -327,10 +337,12 @@ def runAMOSA(amosaParams):
                         amosaParams.dd_archive.pop(pos)
                         amosaParams.dd_func_archive.pop(pos)
                         amosaParams.i_archivesize = amosaParams.i_archivesize - 1
-                        refPointAssociationList, pointAssociationList = associateRemovePoint(refPointAssociationList, pointAssociationList, pos, amosaParams)
+                        refPointAssociationList, pointAssociationList = associateRemovePoint(
+                            refPointAssociationList, pointAssociationList, pos, amosaParams)
                         #debug
                         if(len(pointAssociationList) != len(amosaParams.dd_func_archive)):
-                            print("length mismatch after line 272", len(pointAssociationList),len(amosaParams.dd_archive))
+                            print("length mismatch after line 272", len(
+                                pointAssociationList), len(amosaParams.dd_archive))
                             print(pointAssociationList)
                             exit()
 
@@ -346,7 +358,8 @@ def runAMOSA(amosaParams):
                         isdom = is_dominated(func_new, area2[j], amosaParams)
                         #errorcheck(refPointAssociationList, pointAssociationList)
                         if isdom:
-                            refPointAssociationList, pointAssociationList = associateRemovePoint(refPointAssociationList, pointAssociationList, j-k, amosaParams)
+                            refPointAssociationList, pointAssociationList = associateRemovePoint(
+                                refPointAssociationList, pointAssociationList, j-k, amosaParams)
                             k = k + 1
                         else:
                             amosaParams.dd_archive.append((archive1[j]))
@@ -356,7 +369,8 @@ def runAMOSA(amosaParams):
 
                     #debug
                     if(len(pointAssociationList) != len(amosaParams.dd_func_archive)):
-                        print("length mismatch after line 300", len(pointAssociationList),len(amosaParams.dd_archive))
+                        print("length mismatch after line 300", len(
+                            pointAssociationList), len(amosaParams.dd_archive))
                         print(pointAssociationList)
                         exit()
                     # edited position for cluster
@@ -364,16 +378,17 @@ def runAMOSA(amosaParams):
                     if(amosaParams.i_archivesize > amosaParams.i_softl):
                         #need to modify clustering here
                         clustering(amosaParams)
-                        refPointAssociationList, pointAssociationList = associateAllPoints(refPointAssociationList, pointAssociationList, amosaParams.refPoints, amosaParams.dd_func_archive)
-                    
+                        refPointAssociationList, pointAssociationList = associateAllPoints(
+                            refPointAssociationList, pointAssociationList, amosaParams.refPoints, amosaParams.dd_func_archive)
 
                     amosaParams.i_archivesize = amosaParams.i_archivesize + 1
                     m = amosaParams.i_archivesize - 1
 
                     # Adding the newsol to the archive
                     amosaParams.dd_archive.append(newsol)
-                    amosaParams.dd_func_archive.append(func_new) 
-                    arefPointAssociationList, pointAssociationList = associatePoint(refPointAssociationList, pointAssociationList, amosaParams.refPoints, amosaParams.dd_func_archive, len(amosaParams.dd_func_archive) - 1)
+                    amosaParams.dd_func_archive.append(func_new)
+                    arefPointAssociationList, pointAssociationList = associatePoint(
+                        refPointAssociationList, pointAssociationList, amosaParams.refPoints, amosaParams.dd_func_archive, len(amosaParams.dd_func_archive) - 1)
 
                     current = copy.deepcopy(newsol)
                     func_current = copy.deepcopy(func_new)
@@ -389,7 +404,7 @@ def runAMOSA(amosaParams):
             else:
                 count = 0
                 deldom = 0.0
-                consoleprint(2,i)
+                consoleprint(2, i)
                 for j in range(amosaParams.i_archivesize):
                     isdom = is_dominated(
                         amosaParams.dd_func_archive[j], func_new, amosaParams)
@@ -432,7 +447,8 @@ def runAMOSA(amosaParams):
                     for j in range(amosaParams.i_archivesize):
                         isdom = is_dominated(func_new, area2[j], amosaParams)
                         if(isdom):
-                            refPointAssociationList, pointAssociationList = associateRemovePoint(refPointAssociationList, pointAssociationList, j-k, amosaParams)
+                            refPointAssociationList, pointAssociationList = associateRemovePoint(
+                                refPointAssociationList, pointAssociationList, j-k, amosaParams)
                             k = k + 1
                         else:
                             d_func_archive = copy.deepcopy(area2[j])
@@ -444,17 +460,18 @@ def runAMOSA(amosaParams):
                     if(k > 0):
                         amosaParams.i_archivesize = len(amosaParams.dd_archive)
 
-
                     #debug
                     if(len(pointAssociationList) != len(amosaParams.dd_func_archive)):
-                        print("length mismatch after line 377", len(pointAssociationList),len(amosaParams.dd_archive))
+                        print("length mismatch after line 377", len(
+                            pointAssociationList), len(amosaParams.dd_archive))
                         print(pointAssociationList)
                         exit(0)
 
                     # Re shifted clustering
                     if(amosaParams.i_archivesize > amosaParams.i_softl):
                         clustering(amosaParams)
-                        refPointAssociationList, pointAssociationList = associateAllPoints(refPointAssociationList, pointAssociationList, amosaParams.refPoints, amosaParams.dd_func_archive)
+                        refPointAssociationList, pointAssociationList = associateAllPoints(
+                            refPointAssociationList, pointAssociationList, amosaParams.refPoints, amosaParams.dd_func_archive)
 
                     m = amosaParams.i_archivesize
                     amosaParams.i_archivesize = amosaParams.i_archivesize + 1
@@ -462,7 +479,8 @@ def runAMOSA(amosaParams):
                     amosaParams.dd_archive.append(d_archive)
                     d_func_archive = copy.deepcopy(func_new)
                     amosaParams.dd_func_archive.append(d_func_archive)
-                    refPointAssociationList, pointAssociationList = associatePoint(refPointAssociationList, pointAssociationList, amosaParams.refPoints, amosaParams.dd_func_archive, len(amosaParams.dd_func_archive) - 1)
+                    refPointAssociationList, pointAssociationList = associatePoint(
+                        refPointAssociationList, pointAssociationList, amosaParams.refPoints, amosaParams.dd_func_archive, len(amosaParams.dd_func_archive) - 1)
 
                     current = copy.deepcopy(newsol)
                     func_current = copy.deepcopy(func_new)
@@ -484,8 +502,8 @@ def runAMOSA(amosaParams):
             real_time_graph_data.append([x1, x2, x3])
 
         t = round(t * amosaParams.d_alpha, 10)
-        tt=tt+1
-        
+        tt = tt+1
+
     # added clustering at end
     clustering(amosaParams)
 
@@ -502,9 +520,9 @@ def runAMOSA(amosaParams):
         with open(sys.argv[6], 'w+') as fp:
             for i in range(amosaParams.i_archivesize):
                 for h in range(amosaParams.i_no_offunc):
-                    fp.write(str(amosaParams.dd_func_archive[i][h]) + ' ') 
+                    fp.write(str(amosaParams.dd_func_archive[i][h]) + ' ')
                 fp.write('\n')
-        
+
     with open('objective_values.txt', 'w+') as fp:
 
         for i in range(amosaParams.i_archivesize):
@@ -524,7 +542,7 @@ def runAMOSA(amosaParams):
             fp.write('\n')
             for h in range(amosaParams.i_totalno_var):
                 fp.write("\t" + str(amosaParams.dd_archive[i][h]))
-    
+
     #uncomment the lines below to show graphs
     if amosaParams.i_no_offunc == 2:
         plt.plot(obj1, obj2, 'ro')

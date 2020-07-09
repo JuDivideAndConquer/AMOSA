@@ -136,7 +136,13 @@ def niching(dd_func_archive, dd_archive, associationList, refPoints, i_hardl):
                 maxDistanceIndex = i
 
         # removing the point
-        clustered_dd_func_archive.remove(associationList[maxAssocIndex][maxDistanceIndex][1])
+        try:
+            clustered_dd_func_archive.remove(associationList[maxAssocIndex][maxDistanceIndex][1])
+        except ValueError:
+            print(ValueError)
+            print("----------")
+            print(associationList[maxAssocIndex][maxDistanceIndex])
+            exit(0)
         clustered_dd_archive.remove(associationList[maxAssocIndex][maxDistanceIndex][2])
         associationList[maxAssocIndex].pop(maxDistanceIndex)
 

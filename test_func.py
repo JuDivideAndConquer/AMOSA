@@ -1,9 +1,18 @@
 from math import *
 from amosa import AMOSAType
 import sys
+import numpy as np
+import copy
+import random
+import time
+import operator
+import csv
+from numpy import linalg as LA
+from optproblems import wfg
 
 VALID_FUNC = ['SCH1', 'SCH2', 'DTLZ1', 'DTLZ2', 'DTLZ3',
-              'DTLZ4', 'ZDT1', 'ZDT2', 'ZDT3', 'ZDT4', 'ZDT5', 'ZDT6']
+              'DTLZ4', 'ZDT1', 'ZDT2', 'ZDT3', 'ZDT4', 'ZDT5', 'ZDT6',
+              'IMB1', 'IMB2', 'IMB3', 'IMB4', 'IMB5', 'IMB6', 'IMB7', 'IMB8', 'IMB9', 'IMB10']
 
 
 def init_functions(func):
@@ -28,6 +37,16 @@ def init_functions(func):
         print("Number of objective functions: 2")
         obj = 2
         var = int(input("Enter  the number of variables: "))
+    elif(func in ['IMB1', 'IMB2', 'IMB3', 'IMB7', 'IMB8', 'IMB9']):
+        print("Number of objective functions: 2")
+        print("Number of variables: 10")
+        obj = 2
+        var = 10
+    elif(func in ['IMB4', 'IMB5', 'IMB6', 'IMB10']):
+        print("Number of objective functions: 3")
+        print("Number of variables: 10")
+        obj = 3
+        var = 10
     else:
         #obj = int(sys.argv[2])
         #var = int(input("Enter  the number of variables: "))
@@ -67,12 +86,29 @@ def evaluate(input, c_problem, i_no_offunc):
     elif(c_problem == 'ZDT4'):
         d_eval = ZDT4(input)
         return d_eval
-    elif(c_problem == 'ZDT5'):
-        d_eval = ZDT5(input)
-        return d_eval
     elif(c_problem == 'ZDT6'):
         d_eval = ZDT6(input)
         return d_eval
+    elif (c_problem == "IMB1"):
+        return IMB1(input)
+    elif (c_problem == "IMB2"):
+        return IMB2(input)
+    elif (c_problem == "IMB3"):
+        return IMB3(input)
+    elif (c_problem == "IMB4"):
+        return IMB4(input)
+    elif (c_problem == "IMB5"):
+        return IMB5(input)
+    elif (c_problem == "IMB6"):
+        return IMB6(input)
+    elif (c_problem == "IMB7"):
+        return IMB7(input)
+    elif (c_problem == "IMB8"):
+        return IMB8(input)
+    elif (c_problem == "IMB9"):
+        return IMB9(input)
+    elif (c_problem == "IMB10"):
+        return IMB10(input)
     else:
         print('Invalid arguement for amosaParams.c_problem\nExiting.')
         exit()
@@ -226,6 +262,162 @@ def SCH2(input):
     func2 = (input - 5)**2
     out = [func1, func2]
     return out
+
+
+def IMB1(input_arr):
+	n_var = len(input_arr)
+	h = 0
+	for i in range(1, n_var):
+		t = abs(input_arr[i] - sin(0.5*pi*input_arr[0]))
+		h += (0.5*((-0.9*t*t)+(t**0.6)))
+	g = 0
+	if input_arr[0] > 0.2:
+		g = h
+	f1 = (1.0 + g)*input_arr[0]
+	f2 = (1.0 + g)*(1-sqrt(input_arr[0]))
+	return [f1, f2]
+
+
+def IMB2(input_arr):
+	n_var = len(input_arr)
+	h = 0
+	for i in range(1, n_var):
+		t = abs(input_arr[i] - sin(0.5*pi*input_arr[0]))
+		h += (0.5*((-0.9*t*t)+(t**0.6)))
+	g = 0
+	if (input_arr[0] > 0.6) or (input_arr[0] < 0.4):
+		g = h
+	f1 = (1.0 + g)*input_arr[0]
+	f2 = (1.0 + g)*(1-input_arr[0])
+	return [f1, f2]
+
+
+def IMB3(input_arr):
+	n_var = len(input_arr)
+	h = 0
+	for i in range(1, n_var):
+		t = abs(input_arr[i] - sin(0.5*pi*input_arr[0]))
+		h += (0.5*((-0.9*t*t)+(t**0.6)))
+	g = 0
+	if (input_arr[0] > 1.0) or (input_arr[0] < 0.8):
+		g = h
+	f1 = (1.0 + g)*cos(pi*input_arr[0]*0.5)
+	f2 = (1.0 + g)*sin(pi*input_arr[0]*0.5)
+	return [f1, f2]
+
+
+def IMB4(input_arr):
+	n_var = len(input_arr)
+	h = 0
+	for i in range(2, n_var):
+		t = abs(input_arr[i] - (0.5*(input_arr[0]+input_arr[1])))
+		h += (2.0*cos(pi*0.5*input_arr[0])*((-0.9*t*t)+(t**0.6)))
+	g = 0
+	if (input_arr[0] > 1.0) or (input_arr[0] < 2.0/3.0):
+		g = h
+	f1 = (1.0 + g)*input_arr[0]*input_arr[1]
+	f2 = (1.0 + g)*input_arr[0]*(1.0-input_arr[1])
+	f3 = (1.0 + g)*(1.0-input_arr[0])
+	return [f1, f2, f3]
+
+
+def IMB5(input_arr):
+	n_var = len(input_arr)
+	h = 0
+	for i in range(2, n_var):
+		t = abs(input_arr[i] - (0.5*(input_arr[0]+input_arr[1])))
+		h += (2.0*cos(pi*0.5*input_arr[0])*((-0.9*t*t)+(t**0.6)))
+	g = 0
+	if (input_arr[0] > 0.5) or (input_arr[0] < 0.0):
+		g = h
+	f1 = (1.0 + g)*cos(pi*0.5*input_arr[0])*cos(pi*0.5*input_arr[1])
+	f2 = (1.0 + g)*cos(pi*0.5*input_arr[0])*sin(pi*0.5*input_arr[1])
+	f3 = (1.0 + g)*sin(pi*0.5*input_arr[0])
+	return [f1, f2, f3]
+
+
+def IMB6(input_arr):
+	n_var = len(input_arr)
+	h = 0
+	for i in range(2, n_var):
+		t = abs(input_arr[i] - (0.5*(input_arr[0]+input_arr[1])))
+		h += (2.0*cos(pi*0.5*input_arr[0])*((-0.9*t*t)+(t**0.6)))
+	g = 0
+	if (input_arr[0] > 0.75) or (input_arr[0] < 0.0):
+		g = h
+	f1 = (1.0 + g)*input_arr[0]*input_arr[1]
+	f2 = (1.0 + g)*input_arr[0]*(1.0-input_arr[1])
+	f3 = (1.0 + g)*(1.0-input_arr[0])
+	return [f1, f2, f3]
+
+
+def IMB7(input_arr):
+	n_var = len(input_arr)
+	h1 = 0
+	h2 = 0
+	for i in range(1, n_var):
+		s = abs(input_arr[i] - sin(0.5*pi*input_arr[0]))
+		t = abs(input_arr[i] - 0.5)
+		h1 += (1.0*((-0.9*s*s)+(s**0.6)))
+		h2 += (t**0.6)
+	g = h1
+	if (input_arr[0] > 0.8) or (input_arr[0] < 0.5):
+		g = h2
+	f1 = (1.0 + g)*input_arr[0]
+	f2 = (1.0 + g)*(1-sqrt(input_arr[0]))
+	return [f1, f2]
+
+
+def IMB8(input_arr):
+	n_var = len(input_arr)
+	h1 = 0
+	h2 = 0
+	for i in range(1, n_var):
+		s = abs(input_arr[i] - sin(0.5*pi*input_arr[0]))
+		t = abs(input_arr[i] - 0.5)
+		h1 += (1.0*((-0.9*s*s)+(s**0.6)))
+		h2 += (t**0.6)
+	g = h1
+	if (input_arr[0] > 0.8) or (input_arr[0] < 0.5):
+		g = h2
+	f1 = (1.0 + g)*input_arr[0]
+	f2 = (1.0 + g)*(1-input_arr[0])
+	return [f1, f2]
+
+
+def IMB9(input_arr):
+	n_var = len(input_arr)
+	h1 = 0
+	h2 = 0
+	for i in range(1, n_var):
+		s = abs(input_arr[i] - sin(0.5*pi*input_arr[0]))
+		t = abs(input_arr[i] - 0.5)
+		h1 += (1.0*((-0.9*s*s)+(s**0.6)))
+		h2 += (t**0.6)
+	g = h1
+	if (input_arr[0] > 0.8) or (input_arr[0] < 0.5):
+		g = h2
+	f1 = (1.0 + g)*cos(pi*0.5*input_arr[0])
+	f2 = (1.0 + g)*sin(pi*0.5*input_arr[0])
+	return [f1, f2]
+
+
+def IMB10(input_arr):
+	n_var = len(input_arr)
+	h1 = 0
+	h2 = 0
+	for i in range(2, n_var):
+		s = abs(input_arr[i] - (0.5 * (input_arr[0] + input_arr[1])))
+		t = abs(input_arr[i] - (input_arr[0] * input_arr[1]))
+		h1 += (2.0 * ((-0.9 * s * s) + (s ** 0.6)))
+		h2 += (t ** 0.6)
+	g = h1
+	if ((input_arr[0] > 0.8) or (input_arr[0] < 0.2)) or ((input_arr[1] > 0.8) or (input_arr[1] < 0.2)):
+		g = h2
+	f1 = (1.0 + g) * input_arr[0] * input_arr[1]
+	f2 = (1.0 + g) * input_arr[0] * (1.0 - input_arr[1])
+	f3 = (1.0 + g) * (1.0 - input_arr[0])
+	return [f1, f2, f3]
 
 
 # functions left:

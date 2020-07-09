@@ -9,7 +9,7 @@
 
 import copy
 import numpy as np
-
+import csv
 
 class form_ref_pts(object):
     def __init__(self, m, divisions):
@@ -57,17 +57,17 @@ def form_refs(dim, outer, inner):
 
     return np.asarray(points)
 
+
 class distanceObj(object):
-    def __init__(self,r,c,points):
+    def __init__(self, r, c, points):
         self.row = r
         self.col = c
-        self.dis = self.distance(points[r],points[c])
+        self.dis = self.distance(points[r], points[c])
 
-
-    def distance(self,refPoint1,refPoint2):
+    def distance(self, refPoint1, refPoint2):
         if(len(refPoint1) != len(refPoint2)):
             print("Reference point dimension mismatch")
-            exit(0);
+            exit(0)
         distance = 0
         for i in range(len(refPoint1)):
             distance = distance + (refPoint1[i]-refPoint2[i])**2
@@ -78,11 +78,14 @@ class distanceObj(object):
 # Entry point ----------------------------------
 def getRefPoints(n_obj):
     '''returns generated reference points'''
-    points=[]
-    if(n_obj == 3):
-        divisions = 12
-        refPoints = form_ref_pts(n_obj, divisions)
-        points = refPoints.points
+    points = []
+    if(n_obj == 2):
+        points = np.genfromtxt('Res2.csv', delimiter=',')
+    elif(n_obj == 3):
+        points = np.genfromtxt('Res3.csv', delimiter=',')
+        #divisions = 12
+        #refPoints = form_ref_pts(n_obj, divisions)
+        #points = refPoints.points
     elif(n_obj == 5):
         divisions = 6
         refPoints = form_ref_pts(n_obj, divisions)
@@ -108,10 +111,10 @@ def getRefPoints(n_obj):
         distanceRow = []
         distanceIndexRow = []
         for j in range(len(points)):
-            distanceRow.append(distanceObj(i,j,points))
-        distanceRow.sort(key=lambda x:x.dis)
+            distanceRow.append(distanceObj(i, j, points))
+        distanceRow.sort(key=lambda x: x.dis)
         for i in distanceRow:
             distanceIndexRow.append(i.col)
         distanceMatrix.append(distanceIndexRow)
 
-    return points,distanceMatrix
+    return points, distanceMatrix
