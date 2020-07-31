@@ -78,6 +78,8 @@ def ref_real_mutate_ind(s, amosaParams, cur_ref_index, refPointAssociationList, 
         b = distance(point1, point2)
     else:
         b=0.5
+    #test
+    b = 0.5
     #b=b*(10**random.randint(0,3))
     
     #print("b=",b)

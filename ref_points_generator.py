@@ -82,10 +82,10 @@ def getRefPoints(n_obj):
     if(n_obj == 2):
         points = np.genfromtxt('Res2.csv', delimiter=',')
     elif(n_obj == 3):
-        points = np.genfromtxt('Res3.csv', delimiter=',')
-        #divisions = 12
-        #refPoints = form_ref_pts(n_obj, divisions)
-        #points = refPoints.points
+        #points = np.genfromtxt('Res3.csv', delimiter=',')
+        divisions = 12
+        refPoints = form_ref_pts(n_obj, divisions)
+        points = refPoints.points
     elif(n_obj == 5):
         divisions = 6
         refPoints = form_ref_pts(n_obj, divisions)

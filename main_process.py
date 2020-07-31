@@ -148,6 +148,7 @@ def runAMOSA(amosaParams):
 
     t = amosaParams.d_tmax
     tt = 0
+    cases = [0,0,0]
 
     # Getting the reference points (later to be genenrated only once)
     amosaParams.refPoints, amosaParams.refPointsDistanceMatrix = getRefPoints(
@@ -179,14 +180,13 @@ def runAMOSA(amosaParams):
         #print(pos, pointAssociationList)
         #print('case ' + str(case)  + '\t'+ 'archivesize: ' + str(amosaParams.i_archivesize) + '\t' + 'aList:' + str(len(pointAssociationList)))
         #errorcheck(refPointAssociationList, pointAssociationList, amosaParams)
-        sys.stdout.write("\033[k")
-        sys.stdout.flush()
+        cases[case-1] = cases[case-1]+1
         non_empty_ref = 0
         for x in refPointAssociationList:
             if len(x) != 0:
                 non_empty_ref = non_empty_ref + 1
         spread = non_empty_ref/len(refPointAssociationList) * 100
-        print('iteration: ' + str(i) + '\t' + 'case ' + str(case) + '\t' + str(tt) + 'th temp \t Temperature: ' + '%.10f' % t + '\t' +
+        print('iteration: ' + str(i) + '_' + 'case ' + str(cases) + '_' + str(tt) + 'th temp _ Temperature: ' + '%.10f' % t + '_' +
               'archivesize: ' + str(amosaParams.i_archivesize) + ' Spread: ' + str(non_empty_ref) + '/' + str(len(refPointAssociationList)), end='\r')
         pass
 
@@ -332,6 +332,7 @@ def runAMOSA(amosaParams):
 
                 # case 3(b): If new point is non-dominating with respect to the point in the archive
                 elif(count == 0 and duplicate == 0):
+                    '''
                     # If current point resides in the archive then remove the current point
                     if (flag == 1):
                         amosaParams.dd_archive.pop(pos)
@@ -366,6 +367,8 @@ def runAMOSA(amosaParams):
                             amosaParams.dd_func_archive.append(area2[j])
                     if(k > 0):
                         amosaParams.i_archivesize = len(amosaParams.dd_archive)
+                    '''
+                    amosaParams.i_archivesize = len(amosaParams.dd_archive)
 
                     #debug
                     if(len(pointAssociationList) != len(amosaParams.dd_func_archive)):
@@ -436,6 +439,7 @@ def runAMOSA(amosaParams):
                     #debug
                     #print("New point is non-dominated")
                     #exit(0)
+                    '''
                     area2 = copy.deepcopy(amosaParams.dd_func_archive)
                     archive1 = copy.deepcopy(amosaParams.dd_archive)
                     k = 0
@@ -459,6 +463,8 @@ def runAMOSA(amosaParams):
 
                     if(k > 0):
                         amosaParams.i_archivesize = len(amosaParams.dd_archive)
+                    '''
+                    amosaParams.i_archivesize = len(amosaParams.dd_archive)
 
                     #debug
                     if(len(pointAssociationList) != len(amosaParams.dd_func_archive)):
@@ -505,6 +511,7 @@ def runAMOSA(amosaParams):
         tt = tt+1
 
     # added clustering at end
+    print()
     clustering(amosaParams)
 
     # uncomment the following lines to show real time graph

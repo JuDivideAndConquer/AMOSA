@@ -156,8 +156,8 @@ def clustering(amosaParams):
     dd_func_archive = copy.deepcopy(amosaParams.dd_func_archive)
 
     # Normalization
-    d_normalize_shift, d_normalize_scale = normalize(
-        normalized_dd_func_archive, amosaParams)
+    #d_normalize_shift, d_normalize_scale = normalize(
+    #    normalized_dd_func_archive, amosaParams)
 
     # Getting the reference points (later to be genenrated only once)
     refPoints = amosaParams.refPoints
