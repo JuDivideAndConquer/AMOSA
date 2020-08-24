@@ -113,11 +113,16 @@ def mutate(y, amosaParam, i_rand, b):
     return y
 
 def point_mutate(s, amosaParams, cur_ref_index, refPointAssociationList, temp):
+    rand = random.random()
+    if(rand >= 0.5):
+        s = diff_mut(amosaParams.dd_archive, amosaParams.refPointsDistanceMatrix, refPointAssociationList, cur_ref_index, s, amosaParams.d_min_real_var, amosaParams.d_max_real_var)
+    #s = diff_mut_best_1(amosaParams.dd_archive,amosaParams.dd_func_archive, amosaParams.refPoints, amosaParams.refPointsDistanceMatrix, refPointAssociationList, cur_ref_index, s, amosaParams.d_min_real_var, amosaParams.d_max_real_var)
+    else:
+        s = SBX_mut(amosaParams.dd_archive, amosaParams.refPointsDistanceMatrix, refPointAssociationList, cur_ref_index, s, amosaParams.d_min_real_var, amosaParams.d_max_real_var)
+
     s = ref_real_mutate_ind(s, amosaParams, cur_ref_index, refPointAssociationList, temp)
     #s = polynomial_mutate(s, temp, 100*temp, amosaParams.d_min_real_var, amosaParams.d_max_real_var)
-    s = diff_mut(amosaParams.dd_archive, amosaParams.refPointsDistanceMatrix, refPointAssociationList, cur_ref_index, s, amosaParams.d_min_real_var, amosaParams.d_max_real_var)
-    #s = diff_mut_best_1(amosaParams.dd_archive,amosaParams.dd_func_archive, amosaParams.refPoints, amosaParams.refPointsDistanceMatrix, refPointAssociationList, cur_ref_index, s, amosaParams.d_min_real_var, amosaParams.d_max_real_var)
-    #s = SBX_mut(amosaParams.dd_archive, amosaParams.refPointsDistanceMatrix, refPointAssociationList, cur_ref_index, s, amosaParams.d_min_real_var, amosaParams.d_max_real_var)
+
     return s
 
 # Testing new perturbation schemes------------------------------------------
