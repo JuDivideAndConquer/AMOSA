@@ -1,5 +1,6 @@
 from math import *
 from amosa import AMOSAType
+import sys
 
 VALID_FUNC = ['SCH1', 'SCH2', 'DTLZ1', 'DTLZ2', 'DTLZ3',
               'DTLZ4', 'ZDT1', 'ZDT2', 'ZDT3', 'ZDT4', 'ZDT5', 'ZDT6']
@@ -15,7 +16,7 @@ def init_functions(func):
         obj = 2
         var = 1
     elif(func in ['DTLZ1', 'DTLZ2', 'DTLZ3', 'DTLZ4']):
-        obj = int(input("Enter the number of objective function: "))
+        obj = int(sys.argv[2])
         k = int()
         if(func == 'DTLZ1'):
             k = 5
@@ -28,8 +29,8 @@ def init_functions(func):
         obj = 2
         var = int(input("Enter  the number of variables: "))
     else:
-        obj = int(input("Enter the number of objective functions: "))
-        var = int(input("Enter  the number of variables: "))
+        print("Unknown function")
+        exit()
     return obj, var
 
 

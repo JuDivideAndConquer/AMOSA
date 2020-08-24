@@ -7,10 +7,11 @@ from init_sol import initialize_sol
 from creating_archive import creating_archive
 from main_process import runAMOSA
 import math
+import sys
 
 
 def readParameters(amosaParams):
-    func = input('Enter the test function name: ')
+    func = sys.argv[1]
     if(not (func in VALID_FUNC)):
         print('Invaid function name. Exiting')
         exit()
@@ -22,8 +23,8 @@ def readParameters(amosaParams):
     amosaParams.i_no_offunc, amosaParams.i_totalno_var = init_functions(func)
 
     # Setting hard and soft limits on archive size
-    amosaParams.i_hardl = int(input('Enter the hard-limit: '))
-    amosaParams.i_softl = int(input('Enter the soft-limit: '))
+    amosaParams.i_hardl = int(sys.argv[3])
+    amosaParams.i_softl = int(sys.argv[4])
     if(amosaParams.i_softl < amosaParams.i_hardl):
         print('Invalid soft and hard limits. Exiting')
         exit()
@@ -41,13 +42,13 @@ def readParameters(amosaParams):
     amosaParams.i_hillclimb_no = 20
 
     # Setting the cooling rate
-    amosaParams.d_alpha = float(input('Enter the cooling rate: '))
+    amosaParams.d_alpha = float(sys.argv[5])
     if(amosaParams.d_alpha >= 1 or amosaParams.d_alpha < 0):
         print('Invalid cooling rate (0 < Cooling rate < 1). Exiting')
         exit()
 
     # Setting the range of values of variables
-    for i in range(amosaParams.i_totalno_var):
+    '''for i in range(amosaParams.i_totalno_var):
         amosaParams.d_min_real_var.append(
             float(input('Enter the minimim value of real-variable '+str(i)+': ')))
         amosaParams.d_max_real_var.append(
@@ -56,7 +57,6 @@ def readParameters(amosaParams):
     for i in range(amosaParams.i_totalno_var):
         amosaParams.d_min_real_var.append(0.0)
         amosaParams.d_max_real_var.append(1.0)
-    '''
 
     print(amosaParams.d_min_real_var)
     print(amosaParams.d_max_real_var)
