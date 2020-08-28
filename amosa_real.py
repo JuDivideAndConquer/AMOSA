@@ -44,10 +44,7 @@ def readParameters(amosaParams):
     amosaParams.i_hillclimb_no = 20
 
     # Setting the cooling rate
-    amosaParams.d_alpha = float(sys.argv[5])
-    if(amosaParams.d_alpha >= 1 or amosaParams.d_alpha < 0):
-        print('Invalid cooling rate (0 < Cooling rate < 1). Exiting')
-        exit()
+    amosaParams.maxFES = float(sys.argv[5])
 
     # Setting the range of values of variables
     '''for i in range(amosaParams.i_totalno_var):

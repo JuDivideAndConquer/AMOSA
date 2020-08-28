@@ -168,6 +168,13 @@ def runAMOSA(amosaParams):
     # Setting the no of iterations as the multiple of n_dir closest to 500
     n_dir = len(amosaParams.refPoints)
     amosaParams.i_no_ofiter = n_dir * round(500 / n_dir)
+    print("n_iter:", amosaParams.i_no_ofiter)
+
+    amosaParams.d_alpha = float(amosaParams.d_tmin/amosaParams.d_tmax)**(float(amosaParams.i_no_ofiter/amosaParams.maxFES))
+    print("cooling rate :", amosaParams.d_alpha)
+    if(amosaParams.d_alpha >= 1 or amosaParams.d_alpha < 0):
+        print('Invalid cooling rate (0 < Cooling rate < 1). Exiting')
+        exit()
 
     # list to maintain the list of visited reference points
     # 0 means unvisited
@@ -588,8 +595,10 @@ def runAMOSA(amosaParams):
     clustering(amosaParams, t)
 
     # uncomment the following lines to show real time graph
+    '''
     if amosaParams.i_no_offunc == 3:
         real_time_plot(real_time_graph_data)
+    '''
 
     # with open('saplot.out','w+') as fp:
     obj1 = []
@@ -630,6 +639,7 @@ def runAMOSA(amosaParams):
                 obj3.append(amosaParams.dd_func_archive[i][h])
 
     # uncomment the lines below to show graphs
+    '''
     if amosaParams.i_no_offunc == 2:
         plt.plot(obj1, obj2, "ro")
         plt.show()
@@ -642,3 +652,4 @@ def runAMOSA(amosaParams):
         from polar_plot import displat_polar_plot
 
         displat_polar_plot(amosaParams.dd_func_archive, amosaParams.c_problem)
+    '''

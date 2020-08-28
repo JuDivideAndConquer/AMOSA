@@ -197,12 +197,10 @@ def removeDominated(amosaParams):
 
 
 def clustering(amosaParams, temp):
-    '''
     p = 2 / (1 + math.exp(-temp)) - 1
     rand = random.random()
     if rand > p:
         removeDominated(amosaParams)
-    '''
 
 
     # print("clustering called")
