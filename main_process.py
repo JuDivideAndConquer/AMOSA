@@ -595,10 +595,8 @@ def runAMOSA(amosaParams):
     clustering(amosaParams, t)
 
     # uncomment the following lines to show real time graph
-    '''
     if amosaParams.i_no_offunc == 3:
         real_time_plot(real_time_graph_data)
-    '''
 
     # with open('saplot.out','w+') as fp:
     obj1 = []
@@ -615,14 +613,14 @@ def runAMOSA(amosaParams):
     with open("objective_values.txt", "w+") as fp:
         for i in range(amosaParams.i_archivesize):
             fp.write("\n")
-            for h in range(amosaParams.i_no_offunc):
-                fp.write("\t" + str(amosaParams.dd_func_archive[i][h]))
+            for x in amosaParams.dd_func_archive[i]:
+                fp.write("\t" + str(x))
 
     with open("decision_values.txt", "w+") as fp:
         for i in range(amosaParams.i_archivesize):
             fp.write("\n")
-            for h in range(amosaParams.i_totalno_var):
-                fp.write("\t" + str(amosaParams.dd_archive[i][h]))
+            for x in amosaParams.dd_archive[i]:
+                fp.write("\t" + str(x))
 
 
     removeDominated(amosaParams)
@@ -639,7 +637,6 @@ def runAMOSA(amosaParams):
                 obj3.append(amosaParams.dd_func_archive[i][h])
 
     # uncomment the lines below to show graphs
-    '''
     if amosaParams.i_no_offunc == 2:
         plt.plot(obj1, obj2, "ro")
         plt.show()
@@ -652,4 +649,3 @@ def runAMOSA(amosaParams):
         from polar_plot import displat_polar_plot
 
         displat_polar_plot(amosaParams.dd_func_archive, amosaParams.c_problem)
-    '''

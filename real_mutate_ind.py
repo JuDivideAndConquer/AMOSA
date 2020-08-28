@@ -3,7 +3,7 @@ import math
 import copy
 from math import *
 from clustering import calculatePBI,calculateD1D2
-import numpy as np
+from numpy.random import laplace
 
 
 def real_mutate_ind(s, amosaParam, b = 0.25):
@@ -215,7 +215,8 @@ def SBX_mut(archive, refPointsDistanceMatrix, refPointAssociationList, cur_ref_i
 def diff_mut(archive, refPointsDistanceMatrix, refPointAssociationList, cur_ref_index, v, min_x, max_x, F = 1, CR = 0.5):
     size = len(v)
 
-    F = np.random.laplace(size=1)
+    F = laplace(size=1)
+    F = F[0]
 
     point_samples = getnNeighbours(3, refPointsDistanceMatrix, refPointAssociationList, cur_ref_index)
     try:
