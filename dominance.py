@@ -9,7 +9,7 @@ def find_unsign_dom(func1, func2, amosaParams):
         if(func1[i]-func2[i] != 0):
             d_dominance = d_dominance * \
                 fabs(func1[i]-func2[i])/amosaParams.d_func_range[i]
-        return d_dominance
+    return d_dominance
 
 
 def is_dominated(func1, func2, amosaParams):
