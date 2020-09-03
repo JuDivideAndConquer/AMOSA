@@ -115,7 +115,7 @@ def niching(dd_func_archive, dd_archive, associationList, refPoints, i_hardl):
     clustered_dd_func_archive = copy.deepcopy(dd_func_archive)
     clustered_dd_archive = copy.deepcopy(dd_archive)
 
-    while len(clustered_dd_archive) >= i_hardl:
+    while len(clustered_dd_archive) > i_hardl:
         # find the subspace with the hightest no of associations
         maxAssocIndex = -1
         maxAssoc = -1
