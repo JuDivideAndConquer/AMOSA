@@ -4,5 +4,6 @@ saplot.out
 saplot1.out
 decision_values.txt
 objective_values.txt
+dmetric_data.csv
 .vscode
 results/

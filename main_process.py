@@ -10,7 +10,122 @@ from clustering import clustering
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 from real_time_plot import real_time_plot
+from ref_points_generator import getRefPoints
 import math
+
+
+# Calculation of d1 and d2 (here it is not adjusted for the skipping of normalization)
+def calculateD1D2(point, refPoint):
+    # calculate d1
+    refPointMod = 0.0
+    for x in refPoint:
+        refPointMod = refPointMod + x * x
+    refPointMod = math.sqrt(refPointMod)
+
+    d1 = 0.0
+    for i in range(len(point)):
+        d1 = d1 + point[i] * refPoint[i]
+    d1 = d1 / refPointMod
+
+    # calculate d2
+    pointOnRef = copy.deepcopy(refPoint)
+    for i in range(len(pointOnRef)):
+        pointOnRef[i] = pointOnRef[i] * d1 / refPointMod
+
+    d2Vector = []
+    d2 = 0
+    for i in range(len(point)):
+        d2Vector.append(point[i] - pointOnRef[i])
+        d2 = d2 + (point[i] - pointOnRef[i]) ** 2
+
+    d2 = math.sqrt(d2)
+
+    return d1, d2
+
+
+# function to assciate points with reference points
+# fills up the refPointAssociationList and pointAssociationList
+
+
+def associateAllPoints(
+    refPointAssociationList, pointAssociationList, refPoints, dd_func_archive
+):
+    pointAssociationList = [-1] * len(dd_func_archive)
+    refPointAssociationList = []
+    for i in range(len(refPoints)):
+        refPointAssociationList.append([])
+
+    for i in range(len(dd_func_archive)):
+        minDistance = math.inf
+        minDistanceIndex = -1
+        for j in range(len(refPoints)):
+            d1, d2 = calculateD1D2(dd_func_archive[i], refPoints[j])
+            nDistance = d2
+            if nDistance < minDistance:
+                minDistance = nDistance
+                minDistanceIndex = j
+        refPointAssociationList[minDistanceIndex].append(i)
+        pointAssociationList[i] = minDistanceIndex
+    return refPointAssociationList, pointAssociationList
+
+
+def refPointToAssociate(refPoints, func_point):
+    minDistance = math.inf
+    minDistanceIndex = -1
+    for j in range(len(refPoints)):
+        d1, d2 = calculateD1D2(func_point, refPoints[j])
+        nDistance = d2
+        if nDistance < minDistance:
+            minDistance = nDistance
+            minDistanceIndex = j
+    return minDistanceIndex
+
+
+def associatePoint(
+    refPointAssociationList, pointAssociationList, refPoints, dd_func_archive, pos
+):
+    minDistance = math.inf
+    minDistanceIndex = -1
+    for j in range(len(refPoints)):
+        d1, d2 = calculateD1D2(dd_func_archive[pos], refPoints[j])
+        nDistance = d2
+        if nDistance < minDistance:
+            minDistance = nDistance
+            minDistanceIndex = j
+    refPointAssociationList[minDistanceIndex].append(pos)
+    if len(pointAssociationList) == pos:
+        pointAssociationList.append(-1)
+    pointAssociationList[pos] = minDistanceIndex
+    return refPointAssociationList, pointAssociationList
+
+
+def errorcheck(refPointAssociationList, pointAssociationList, amosaParams):
+    if len(pointAssociationList) != len(amosaParams.dd_archive):
+        print(
+            "PointAssociationList length mismatch, list len:",
+            len(pointAssociationList),
+            " archive length:",
+            len(amosaParams.dd_archive),
+        )
+        return True
+    for i in range(len(pointAssociationList)):
+        j = pointAssociationList[i]
+        if i not in refPointAssociationList[j]:
+            print(i, "th point not in ", j, "th refPoint: ", refPointAssociationList[j])
+            return True
+    return False
+
+
+def associateRemovePoint(
+    refPointAssociationList, pointAssociationList, pos, amosaParams
+):
+    refPointAssociationList[pointAssociationList[pos]].remove(pos)
+    for i in range(pos + 1, len(pointAssociationList)):
+        ref_ind = pointAssociationList[i]
+        refPointAssociationList[ref_ind].remove(i)
+        refPointAssociationList[ref_ind].append(i - 1)
+    pointAssociationList.pop(pos)
+    return refPointAssociationList, pointAssociationList
 
 def runAMOSA(amosaParams):
     r = int()
@@ -27,6 +142,8 @@ def runAMOSA(amosaParams):
     newsol = []
     d_eval = []
     real_time_graph_data = []
+    dmetric_arr = []
+    temp_arr = []
 
     p2 = amosaParams.i_softl + 3
     p1 = amosaParams.i_archivesize - 1
@@ -34,6 +151,21 @@ def runAMOSA(amosaParams):
 
     r = random.randint(0, p1)
     current = copy.deepcopy(amosaParams.dd_archive[r])
+
+    # Getting the reference points (later to be genenrated only once)
+    amosaParams.refPoints, amosaParams.refPointsDistanceMatrix = getRefPoints(
+        amosaParams.i_no_offunc
+    )
+
+    # Setting the no of iterations as the multiple of n_dir closest to 500
+    n_dir = len(amosaParams.refPoints)
+
+    # list to store the indices of points associated with each reference point
+    refPointAssociationList = []
+    for i in range(n_dir):
+        refPointAssociationList.append([])
+    # list to indicate which reference point the point belongs to
+    pointAssociationList = [-1] * amosaParams.i_archivesize
 
     flag = 1
     pos = r
@@ -263,6 +395,15 @@ def runAMOSA(amosaParams):
                 x2.append(amosaParams.dd_func_archive[i][1])
             real_time_graph_data.append([x1, x2])
 
+        
+        refPointAssociationList, pointAssociationList = associateAllPoints(refPointAssociationList, pointAssociationList, amosaParams.refPoints, amosaParams.dd_func_archive)
+
+        S = [len(x) for x in refPointAssociationList]
+        n_pop = len(amosaParams.dd_archive)
+        S_ide = n_pop/n_dir
+        d_metric = (sum([(x - S_ide)**2 for x in S])**0.5)/S_ide
+        dmetric_arr.append(d_metric)
+        temp_arr.append(t)
 
         t = round(t * amosaParams.d_alpha, 10)
         tt=tt+1
@@ -305,3 +446,15 @@ def runAMOSA(amosaParams):
         ax = plt.axes(projection='3d')
         ax.scatter3D(obj1, obj2, obj3)
         plt.show()
+
+    with open("dmetric_data.csv","w+") as fp:
+        for i in range(len(dmetric_arr)):
+            fp.write(str(temp_arr[i])+","+str(dmetric_arr[i])+"\n")
+
+    #showing dmetric graph
+    plt.plot(list(range(len(temp_arr))), dmetric_arr)
+    plt.xticks(list(range(len(temp_arr)))[::10],temp_arr[::10],rotation=90)
+    #set parameters for tick labels
+    #plt.tick_params(axis='x', which='major', width=50)
+    plt.tight_layout()
+    plt.show()
