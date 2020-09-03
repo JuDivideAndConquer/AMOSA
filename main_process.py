@@ -9,6 +9,7 @@ from dominance import find_unsign_dom
 from dominance import is_dominated
 from clustering import clustering,removeDominated
 import matplotlib.pyplot as plt
+from matplotlib import ticker
 from mpl_toolkits import mplot3d
 from real_time_plot import real_time_plot
 import math
@@ -144,6 +145,8 @@ def runAMOSA(amosaParams):
     newsol = []
     d_eval = []
     real_time_graph_data = []
+    dmetric_arr = []
+    temp_arr = []
 
     p2 = amosaParams.i_softl + 3
     p1 = amosaParams.i_archivesize - 1
@@ -159,6 +162,7 @@ def runAMOSA(amosaParams):
     t = amosaParams.d_tmax
     tt = 0
     cases = [0, 0, 0]
+    S = []
 
     # Getting the reference points (later to be genenrated only once)
     amosaParams.refPoints, amosaParams.refPointsDistanceMatrix = getRefPoints(
@@ -587,6 +591,13 @@ def runAMOSA(amosaParams):
                 x3.append(amosaParams.dd_func_archive[i][2])
             real_time_graph_data.append([x1, x2, x3])
 
+        S = [len(x) for x in refPointAssociationList]
+        n_pop = len(amosaParams.dd_archive)
+        S_ide = n_pop/n_dir
+        d_metric = (sum([(x - S_ide)**2 for x in S])**0.5)/S_ide
+        dmetric_arr.append(d_metric)
+        temp_arr.append(t)
+
         t = round(t * amosaParams.d_alpha, 10)
         tt = tt + 1
 
@@ -595,8 +606,8 @@ def runAMOSA(amosaParams):
     clustering(amosaParams, t)
 
     # uncomment the following lines to show real time graph
-    if amosaParams.i_no_offunc == 3:
-        real_time_plot(real_time_graph_data)
+    #if amosaParams.i_no_offunc == 3:
+    #    real_time_plot(real_time_graph_data)
 
     # with open('saplot.out','w+') as fp:
     obj1 = []
@@ -622,9 +633,14 @@ def runAMOSA(amosaParams):
             for x in amosaParams.dd_archive[i]:
                 fp.write("\t" + str(x))
 
+    with open("dmetric_data.csv","w+") as fp:
+        for i in range(len(dmetric_arr)):
+            fp.write(str(temp_arr[i])+","+str(dmetric_arr[i])+"\n")
 
-    removeDominated(amosaParams)
-    print(len(amosaParams.dd_archive))
+
+
+    #removeDominated(amosaParams)
+    #print(len(amosaParams.dd_archive))
 
     for i in range(len(amosaParams.dd_archive)):
         for h in range(amosaParams.i_no_offunc):
@@ -644,8 +660,18 @@ def runAMOSA(amosaParams):
         fig = plt.figure()
         ax = plt.axes(projection="3d")
         ax.scatter3D(obj1, obj2, obj3)
+        ax.set(xlabel="$F_1(X)$",ylabel="$F_2(X)$",zlabel="$F_3(X)$")
         plt.show()
     else:
         from polar_plot import displat_polar_plot
 
         displat_polar_plot(amosaParams.dd_func_archive, amosaParams.c_problem)
+
+
+    #showing dmetric graph
+    plt.plot(list(range(len(temp_arr))), dmetric_arr)
+    plt.xticks(list(range(len(temp_arr)))[::10],temp_arr[::10],rotation=90)
+    #set parameters for tick labels
+    #plt.tick_params(axis='x', which='major', width=50)
+    plt.tight_layout()
+    plt.show()
