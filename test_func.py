@@ -56,7 +56,7 @@ def init_functions(func):
     elif func in ["ZDT1", "ZDT2", "ZDT3", "ZDT4", "ZDT5", "ZDT6"]:
         print("Number of objective functions: 2")
         obj = 2
-        var = int(input("Enter  the number of variables: "))
+        var = 30
     elif func in ["IMB1", "IMB2", "IMB3", "IMB7", "IMB8", "IMB9"]:
         print("Number of objective functions: 2")
         print("Number of variables: 10")
