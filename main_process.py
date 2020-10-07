@@ -233,6 +233,13 @@ def runAMOSA(amosaParams):
         )
         pass
 
+    S = [len(x) for x in refPointAssociationList]
+    n_pop = len(amosaParams.dd_archive)
+    S_ide = n_pop/n_dir
+    d_metric = (sum([(x - S_ide)**2 for x in S])**0.5)/S_ide
+    dmetric_arr.append(d_metric)
+    temp_arr.append(t)
+
     while t >= amosaParams.d_tmin:
         for i in range(amosaParams.i_no_ofiter):
 
@@ -591,15 +598,15 @@ def runAMOSA(amosaParams):
                 x3.append(amosaParams.dd_func_archive[i][2])
             real_time_graph_data.append([x1, x2, x3])
 
+        t = round(t * amosaParams.d_alpha, 10)
+        tt = tt + 1
+
         S = [len(x) for x in refPointAssociationList]
         n_pop = len(amosaParams.dd_archive)
         S_ide = n_pop/n_dir
         d_metric = (sum([(x - S_ide)**2 for x in S])**0.5)/S_ide
         dmetric_arr.append(d_metric)
         temp_arr.append(t)
-
-        t = round(t * amosaParams.d_alpha, 10)
-        tt = tt + 1
 
     # added clustering at end
     print()
