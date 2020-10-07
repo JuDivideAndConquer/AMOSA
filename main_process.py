@@ -178,6 +178,13 @@ def runAMOSA(amosaParams):
         print(  "_____________________________________________________________________________________________________________________________________", end='\r')
         print(  'iteration: ' + str(i) +'\t\t'+ 'case ' + str(case) + '\t'+ str(tt) + 'th temp \t Temperature: ' + '%.10f'%t  + '\t\t'+ 'archivesize: ' + str(amosaParams.i_archivesize), end='\r')
 
+    S = [len(x) for x in refPointAssociationList]
+    n_pop = len(amosaParams.dd_archive)
+    S_ide = n_pop/n_dir
+    d_metric = (sum([(x - S_ide)**2 for x in S])**0.5)/S_ide
+    dmetric_arr.append(d_metric)
+    temp_arr.append(t)
+
     while(t >= amosaParams.d_tmin):
         for i in range(amosaParams.i_no_ofiter):
             duplicate = 0
@@ -398,15 +405,16 @@ def runAMOSA(amosaParams):
         
         refPointAssociationList, pointAssociationList = associateAllPoints(refPointAssociationList, pointAssociationList, amosaParams.refPoints, amosaParams.dd_func_archive)
 
+
+        t = round(t * amosaParams.d_alpha, 10)
+        tt=tt+1
+
         S = [len(x) for x in refPointAssociationList]
         n_pop = len(amosaParams.dd_archive)
         S_ide = n_pop/n_dir
         d_metric = (sum([(x - S_ide)**2 for x in S])**0.5)/S_ide
         dmetric_arr.append(d_metric)
         temp_arr.append(t)
-
-        t = round(t * amosaParams.d_alpha, 10)
-        tt=tt+1
 
     if(amosaParams.i_no_offunc == 3):
         real_time_plot(real_time_graph_data)
