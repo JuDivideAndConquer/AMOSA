@@ -272,7 +272,7 @@ def SCH1(input):
 def SCH2(input):
     func1 = float()
     if input <= 1:
-        func1 = -input
+        func1 = input
     elif input > 1 and input <= 3:
         func1 = input - 2
     elif input > 3 and input <= 4:
